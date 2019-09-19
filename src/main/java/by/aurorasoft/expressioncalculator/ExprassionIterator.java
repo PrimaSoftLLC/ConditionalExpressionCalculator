@@ -1,3 +1,4 @@
+package by.aurorasoft.expressioncalculator;
 
 /**
  * iterate by Math or Conditional or Logic expression

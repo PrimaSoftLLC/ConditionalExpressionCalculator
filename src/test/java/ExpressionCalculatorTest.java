@@ -1,3 +1,4 @@
+import by.aurorasoft.expressioncalculator.ExpressionCalculator;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

@@ -1,3 +1,5 @@
+package by.aurorasoft.expressioncalculator;
+
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;

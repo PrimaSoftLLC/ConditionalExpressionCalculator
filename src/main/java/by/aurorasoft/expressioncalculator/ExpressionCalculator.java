@@ -1,3 +1,5 @@
+package by.aurorasoft.expressioncalculator;
+
 import java.util.Deque;
 import java.util.Stack;
 

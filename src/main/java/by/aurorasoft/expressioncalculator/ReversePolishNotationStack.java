@@ -1,3 +1,5 @@
+package by.aurorasoft.expressioncalculator;
+
 import java.util.*;
 
 public class ReversePolishNotationStack {
