@@ -38,7 +38,7 @@ public class ExprassionCheckerTest {
     @Test
     public void check6() {
         expectedEx.expect(IllegalArgumentException.class);
-        expectedEx.expectMessage("Illegal logic expression has not boolean result");
+        expectedEx.expectMessage("Illegal logic expression - result is not boolean. Wrong use operand '+'");
         checker.check("({101}>{111})+({234}+{456})");
     }
 

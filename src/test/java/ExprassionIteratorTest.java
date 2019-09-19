@@ -207,14 +207,6 @@ public class ExprassionIteratorTest {
     }
 
     @Test
-    public void test21() {
-        ExprassionIterator exprassionIterator = new ExprassionIterator("(2+2)/(4*2)");
-        while(exprassionIterator.hasNext()){
-            System.out.println(exprassionIterator.next());
-        }
-    }
-
-    @Test
     public void test20() {
         ExprassionIterator exprassionIterator = new ExprassionIterator("(6+10-4)/(1+1*2)+1");
         assertEquals("(", exprassionIterator.next());
