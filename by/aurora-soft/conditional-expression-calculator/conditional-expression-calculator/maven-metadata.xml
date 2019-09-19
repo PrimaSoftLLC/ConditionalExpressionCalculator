@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>by.aurora-soft.conditional-expression-calculator</groupId>
+  <artifactId>conditional-expression-calculator</artifactId>
+  <versioning>
+    <versions>
+      <version>1.0-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20190919133752</lastUpdated>
+  </versioning>
+</metadata>
