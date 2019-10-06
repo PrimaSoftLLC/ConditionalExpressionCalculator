@@ -17,6 +17,12 @@ public class ReversePolishNotationStackTest {
     }
 
     @Test
+    public void test01() {
+        Deque actual = reversePolishNotationStack.create("{x}*2+3");
+        assertEquals(List.of("{x}", "2", "*", "3", "+"), actual);
+    }
+
+    @Test
     public void test0() {
         Deque actual = reversePolishNotationStack.create("");
         assertEquals(List.of(), actual);

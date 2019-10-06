@@ -67,7 +67,7 @@ public class ExpressionCalculator {
 
     private final class Result {
         Boolean result = null;
-        boolean tempResult;
+        Boolean tempResult = null;
         Stack<Float> stack = new Stack();
 
         boolean getResult(){
@@ -92,6 +92,7 @@ public class ExpressionCalculator {
             if (SupportedOperations.isCondition(operand)) {
                 float b = stack.pop();
                 float a = stack.pop();
+                result = tempResult;
                 tempResult = SupportedOperations.doCondition(a, b, operand);
                 return;
             }

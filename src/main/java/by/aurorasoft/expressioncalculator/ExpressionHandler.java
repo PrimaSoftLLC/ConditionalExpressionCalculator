@@ -16,8 +16,13 @@ public class ExpressionHandler {
     public Set<Long> getTokenIds(Iterable<String> list) {
         Set<Long> result = new HashSet<>();
         for (String s : list) {
-            if(s.charAt(0) == SupportedOperations.START_SENSOR_ID_TOKEN){
-                result.add(Long.valueOf(s.substring(1, s.length() - 1)));
+            try {
+                if (s.charAt(0) == SupportedOperations.START_SENSOR_ID_TOKEN
+                        && s.charAt(1) != 'x') {
+                    result.add(Long.valueOf(s.substring(1, s.length() - 1)));
+                }
+            } catch (Exception e){
+                System.err.println(String.format("token %s can't convert to long", s));
             }
         }
         return result;

@@ -39,7 +39,15 @@ public class ExpressionCalculatorTest {
         assertEquals(true, calculator.calculateConditional("100+100<120*2"));
         assertEquals(true, calculator.calculateConditional("100+100!=120*2/2"));
         assertEquals(true, calculator.calculateConditional("100+100=100*2"));
+        assertEquals(true, calculator.calculateConditional("100>0&10=10"));
+        assertEquals(false, calculator.calculateConditional("100>0&10=11"));
+        assertEquals(false, calculator.calculateConditional("0>0&0=0"));
         assertEquals(true, calculator.calculateConditional("0<=0"));
+    }
+
+    @Test
+    public void test(){
+        assertEquals(false, calculator.calculateConditional("0>0&0=0"));
     }
 
     @Test
@@ -49,7 +57,7 @@ public class ExpressionCalculatorTest {
         assertEquals(false, calculator.calculateConditional("10+1>0&100+100<120"));
         assertEquals(false, calculator.calculateConditional("10>0&&100<1"));
         assertEquals(true, calculator.calculateConditional("10>0|100<120"));
-        assertEquals(false, calculator.calculateConditional("10>0|100<120/2"));
+        assertEquals(true, calculator.calculateConditional("10>0|100<120/2"));
         assertEquals(true, calculator.calculateConditional("10>0|100<120|150>120"));
         assertEquals(true, calculator.calculateConditional("10>50|100<120|150>120"));
         assertEquals(true, calculator.calculateConditional("10>50|200<120|150>120"));
