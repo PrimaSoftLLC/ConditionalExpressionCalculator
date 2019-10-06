@@ -2,23 +2,23 @@
 <metadata modelVersion="1.1.0">
   <groupId>by.aurora-soft.conditional-expression-calculator</groupId>
   <artifactId>conditional-expression-calculator</artifactId>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.3-SNAPSHOT</version>
   <versioning>
     <snapshot>
-      <timestamp>20190929.130611</timestamp>
+      <timestamp>20191006.073128</timestamp>
       <buildNumber>1</buildNumber>
     </snapshot>
-    <lastUpdated>20190929130611</lastUpdated>
+    <lastUpdated>20191006073128</lastUpdated>
     <snapshotVersions>
       <snapshotVersion>
         <extension>jar</extension>
-        <value>1.2-20190929.130611-1</value>
-        <updated>20190929130611</updated>
+        <value>1.3-20191006.073128-1</value>
+        <updated>20191006073128</updated>
       </snapshotVersion>
       <snapshotVersion>
         <extension>pom</extension>
-        <value>1.2-20190929.130611-1</value>
-        <updated>20190929130611</updated>
+        <value>1.3-20191006.073128-1</value>
+        <updated>20191006073128</updated>
       </snapshotVersion>
     </snapshotVersions>
   </versioning>
