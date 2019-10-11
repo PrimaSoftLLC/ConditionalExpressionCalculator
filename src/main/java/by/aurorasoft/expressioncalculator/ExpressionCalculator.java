@@ -11,11 +11,11 @@ import java.util.Stack;
  */
 public class ExpressionCalculator {
 
-    private final ReversePolishNotationStack reversePolishNotation = new ReversePolishNotationStack();
+    private final ReversePolishNotation reversePolishNotation = new ReversePolishNotation();
 
     /**
      * Calculate math {@param expression}. Every {@param expression} convert
-     * to Reverse Polish Notation {@link ReversePolishNotationStack}
+     * to Reverse Polish Notation {@link ReversePolishNotation}
      * @return number as a result
      */
     public float calculateMath(String expression) {
@@ -23,7 +23,7 @@ public class ExpressionCalculator {
     }
 
     /**
-     * Calculate math {@param expression} the Reverse Polish Notation {@link ReversePolishNotationStack}
+     * Calculate math {@param expression} the Reverse Polish Notation {@link ReversePolishNotation}
      * @return number as a result
      */
     public float calculateMath(List<EToken> tokens) {
@@ -42,7 +42,7 @@ public class ExpressionCalculator {
 
     /**
      * Calculate conditional {@param expression}. Every {@param expression} convert
-     * to Reverse Polish Notation {@link ReversePolishNotationStack}
+     * to Reverse Polish Notation {@link ReversePolishNotation}
      * @return boolean as a result
      */
     public boolean calculateConditional(String expression) {
@@ -50,7 +50,7 @@ public class ExpressionCalculator {
     }
 
     /**
-     * Calculate conditional {@param expression} the Reverse Polish Notation {@link ReversePolishNotationStack}
+     * Calculate conditional {@param expression} the Reverse Polish Notation {@link ReversePolishNotation}
      * @return boolean as a result
      */
     public boolean calculateConditional(List<EToken> tokens) {

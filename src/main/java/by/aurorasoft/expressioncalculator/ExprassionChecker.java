@@ -5,8 +5,6 @@ import by.aurorasoft.expressioncalculator.model.ETokens;
 import by.aurorasoft.expressioncalculator.model.EType;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * check the expression
@@ -23,7 +21,7 @@ public class ExprassionChecker {
 
     private static final Set<EType> OPERATIONS = new HashSet<>();
 
-    private final ReversePolishNotationStack RPNcreator = new ReversePolishNotationStack();
+    private final ReversePolishNotation RPNcreator = new ReversePolishNotation();
 
     static {
         OPERATIONS.addAll(SupportedOperations.MATH);

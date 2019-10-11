@@ -5,7 +5,7 @@ import by.aurorasoft.expressioncalculator.model.EType;
 
 import java.util.*;
 
-public class ReversePolishNotationStack {
+public class ReversePolishNotation {
 
     public List<EToken> create(ExpressionIterator iterator) {
         final List<EToken> exitStack = new LinkedList<>();

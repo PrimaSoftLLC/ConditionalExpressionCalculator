@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class ExpressionHandler {
 
-    private final ReversePolishNotationStack reversePolishNotationStack = new ReversePolishNotationStack();
+    private final ReversePolishNotation reversePolishNotation = new ReversePolishNotation();
 
     /**
      * Iterate by {@param list} if string starts with {@link SupportedOperations#START_SENSOR_ID_TOKEN}
@@ -35,6 +35,6 @@ public class ExpressionHandler {
      * @return Set of token numbers
      */
     public Set<Long> getTokenIds(String s) {
-        return s != null ? getTokenIds(reversePolishNotationStack.create(s)) : new HashSet<>();
+        return s != null ? getTokenIds(reversePolishNotation.create(s)) : new HashSet<>();
     }
 }
