@@ -1,6 +1,8 @@
 package by.aurorasoft.expressioncalculator;
 
-import java.util.Deque;
+import by.aurorasoft.expressioncalculator.model.EToken;
+import by.aurorasoft.expressioncalculator.model.EType;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,29 +13,28 @@ public class ExpressionHandler {
     /**
      * Iterate by {@param list} if string starts with {@link SupportedOperations#START_SENSOR_ID_TOKEN}
      * then get token number.
+     *
      * @return Set of token numbers
      */
-    public Set<Long> getTokenIds(Iterable<String> list) {
-        Set<Long> result = new HashSet<>();
-        for (String s : list) {
-            try {
-                if (s.charAt(0) == SupportedOperations.START_SENSOR_ID_TOKEN
-                        && s.charAt(1) != 'x') {
-                    result.add(Long.valueOf(s.substring(1, s.length() - 1)));
-                }
-            } catch (Exception e){
-                System.err.println(String.format("token %s can't convert to long", s));
+    public Set<Long> getTokenIds(Iterable<EToken> tokens) {
+        Set<Long> r = new HashSet<>();
+        if (tokens == null) {
+            return r;
+        }
+        for (EToken t : tokens) {
+            if (t.is(EType.TOKEN)) {
+                r.add(t.getTokenId());
             }
         }
-        return result;
+        return r;
     }
 
     /**
      * Handle {@param list} Firstly convert {@param s} to Deque<String> and then get token by {@link #getTokenIds(Iterable)}
+     *
      * @return Set of token numbers
      */
     public Set<Long> getTokenIds(String s) {
-        Deque<String> list = reversePolishNotationStack.create(s);
-        return getTokenIds(list);
+        return s != null ? getTokenIds(reversePolishNotationStack.create(s)) : new HashSet<>();
     }
 }

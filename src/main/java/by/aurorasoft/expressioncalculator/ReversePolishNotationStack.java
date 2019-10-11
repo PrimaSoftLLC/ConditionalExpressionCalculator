@@ -1,41 +1,42 @@
 package by.aurorasoft.expressioncalculator;
 
+import by.aurorasoft.expressioncalculator.model.EToken;
+import by.aurorasoft.expressioncalculator.model.EType;
+
 import java.util.*;
 
 public class ReversePolishNotationStack {
 
-    public Deque<String> create(ExprassionIterator iterator) {
-        final Deque<String> exitStack = new LinkedList<>();
-        final Deque<String> operations = new LinkedList<>();
+    public List<EToken> create(ExpressionIterator iterator) {
+        final List<EToken> exitStack = new LinkedList<>();
+        final Deque<EToken> operations = new LinkedList<>();
 
         while (iterator.hasNext()) {
-            String s = iterator.next();
-            if (s.equals(SupportedOperations.OPEN_BRACKET)) {
-                operations.addLast(s);
+            EToken t = iterator.next();
+            if (t.is(EType.OPEN_B)) {
+                operations.addLast(t);
                 continue;
             }
-            if (s.equals(SupportedOperations.CLOSE_BRACKET)) {
-                while (!operations.getLast().equals(SupportedOperations.OPEN_BRACKET)) {
-                    exitStack.addLast(operations.pollLast());
+            if (t.is(EType.CLOSE_B)) {
+                while (!operations.getLast().is(EType.OPEN_B) ) {
+                    exitStack.add(operations.pollLast());
                 }
                 operations.pollLast();
                 continue;
             }
-            if (!SupportedOperations.PRIORITY.containsKey(s)) {
-                exitStack.addLast(s);
+            if (!SupportedOperations.PRIORITY.containsKey(t.getType())) {
+                exitStack.add(t);
             } else {
                 if (!operations.isEmpty() &&
-                        SupportedOperations.PRIORITY.get(operations.getLast()) >= SupportedOperations.PRIORITY.get(s)) {
-                    exitStack.addLast(operations.pollLast());
+                        SupportedOperations.PRIORITY.get(operations.getLast().getType()) >= SupportedOperations.PRIORITY.get(t.getType())) {
+                    exitStack.add(operations.pollLast());
                 }
-                operations.addLast(s);
+                operations.addLast(t);
             }
         }
-
         while (operations.size() != 0) {
-            exitStack.addLast(operations.pollLast());
+            exitStack.add(operations.pollLast());
         }
-
         return exitStack;
     }
 
@@ -55,9 +56,8 @@ public class ReversePolishNotationStack {
      *                         Can contains dinamical data - token number in brackets {123}.
      * @return Stack of strings with reverse polish notation
      */
-    public Deque<String> create(String stringExpression) {
-
-        final ExprassionIterator rawExpr = new ExprassionIterator(stringExpression);
+    public List<EToken> create(String stringExpression) {
+        final ExpressionIterator rawExpr = new ExpressionIterator(stringExpression);
         return create(rawExpr);
     }
 }

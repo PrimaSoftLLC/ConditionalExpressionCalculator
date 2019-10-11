@@ -1,15 +1,20 @@
 package by.aurorasoft.expressioncalculator;
 
+import by.aurorasoft.expressioncalculator.model.EToken;
+import by.aurorasoft.expressioncalculator.model.ETokens;
+
+import javax.swing.border.EtchedBorder;
+
 /**
  * iterate by Math or Conditional or Logic expression
  */
-public class ExprassionIterator {
+public class ExpressionIterator {
 
     private final String raw;
     private final int length;
     private int index = 0;
 
-    public ExprassionIterator(String raw) {
+    public ExpressionIterator(String raw) {
         if (raw == null) {
             this.raw = "";
         } else {
@@ -22,14 +27,14 @@ public class ExprassionIterator {
      * Iterate by {@link #raw} while {@link #index} < {@link #length}
      * @return next operand from {@link #raw}
      */
-    public String next() {
+    public EToken next() {
         String r = new String();
         //read digit
         if (Character.isDigit(raw.charAt(index))) {
-            while (index <= length - 1 && Character.isDigit(raw.charAt(index))) {
+            while (index <= length - 1 && (Character.isDigit(raw.charAt(index)) || raw.charAt(index) == '.')) {
                 r += raw.charAt(index++);
             }
-            return r;
+            return ETokens.create(r);
         }
         //read sensor Id for example {113}
         if (raw.charAt(index) == SupportedOperations.START_SENSOR_ID_TOKEN) {
@@ -37,12 +42,12 @@ public class ExprassionIterator {
                 r += raw.charAt(index++);
             }
             r += raw.charAt(index++);
-            return r;
+            return ETokens.create(r);
         }
 
         if (SupportedOperations.UNO_OPERATIONS.contains(raw.charAt(index))) {
             r += raw.charAt(index++);
-            return r;
+            return ETokens.create(r);
         }
 
         while (index <= length - 1 && !Character.isDigit(raw.charAt(index))
@@ -50,7 +55,7 @@ public class ExprassionIterator {
                 && !SupportedOperations.UNO_OPERATIONS.contains(raw.charAt(index))) {
             r += raw.charAt(index++);
         }
-        return r;
+        return ETokens.create(r);
     }
 
     /**

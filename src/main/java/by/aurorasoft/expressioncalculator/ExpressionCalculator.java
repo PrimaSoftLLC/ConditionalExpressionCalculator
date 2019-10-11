@@ -1,6 +1,8 @@
 package by.aurorasoft.expressioncalculator;
 
-import java.util.Deque;
+import by.aurorasoft.expressioncalculator.model.EToken;
+
+import java.util.List;
 import java.util.Stack;
 
 /**
@@ -24,16 +26,15 @@ public class ExpressionCalculator {
      * Calculate math {@param expression} the Reverse Polish Notation {@link ReversePolishNotationStack}
      * @return number as a result
      */
-    public float calculateMath(Deque<String> deque) {
+    public float calculateMath(List<EToken> tokens) {
         Stack<Float> res = new Stack<>();
-        while (deque.size() > 0) {
-            String operand = deque.pollFirst();
-            if (!SupportedOperations.isMath(operand)) {
-                res.push(Float.valueOf(operand));
+        for (EToken t : tokens) {
+            if (!SupportedOperations.isMath(t.getType())) {
+                res.push(t.getValue());
             } else {
                 float b = res.pop();
                 float a = res.pop();
-                res.push(SupportedOperations.calculate(a, b, operand));
+                res.push(SupportedOperations.calculate(a, b, t.getType()));
             }
         }
         return res.pop();
@@ -52,14 +53,13 @@ public class ExpressionCalculator {
      * Calculate conditional {@param expression} the Reverse Polish Notation {@link ReversePolishNotationStack}
      * @return boolean as a result
      */
-    public boolean calculateConditional(Deque<String> deque) {
-        Result result = new Result();
-        while (deque.size() > 0) {
-            String operand = deque.pollFirst();
-            if (!SupportedOperations.contains(operand)) {
-                result.pushValue(Float.valueOf(operand));
+    public boolean calculateConditional(List<EToken> tokens) {
+        final Result result = new Result();
+        for (EToken t : tokens) {
+            if (SupportedOperations.contains(t.getType())) {
+                result.doOperation(t);
             } else {
-                result.doOperation(operand);
+                result.pushValue(t.getValue());
             }
         }
         return result.getResult();
@@ -68,13 +68,13 @@ public class ExpressionCalculator {
     private final class Result {
         Boolean result = null;
         Boolean tempResult = null;
-        Stack<Float> stack = new Stack();
+        final Stack<Float> stack = new Stack();
 
         boolean getResult(){
             if(result != null){
                 return result;
             } else {
-                return tempResult;
+                return tempResult != null? tempResult : true;
             }
         }
 
@@ -82,25 +82,25 @@ public class ExpressionCalculator {
             stack.push(v);
         }
 
-        void doOperation(String operand) {
-            if (SupportedOperations.isMath(operand)) {
+        void doOperation(EToken operand) {
+            if (SupportedOperations.isMath(operand.getType())) {
                 float b = stack.pop();
                 float a = stack.pop();
-                stack.push(SupportedOperations.calculate(a, b, operand));
+                stack.push(SupportedOperations.calculate(a, b, operand.getType()));
                 return;
             }
-            if (SupportedOperations.isCondition(operand)) {
+            if (SupportedOperations.isCondition(operand.getType())) {
                 float b = stack.pop();
                 float a = stack.pop();
                 result = tempResult;
-                tempResult = SupportedOperations.doCondition(a, b, operand);
+                tempResult = SupportedOperations.doCondition(a, b, operand.getType());
                 return;
             }
-            if (SupportedOperations.isLogic(operand)) {
+            if (SupportedOperations.isLogic(operand.getType())) {
                 if(result == null){
                     result = tempResult;
                 }
-                result = SupportedOperations.doLogic(result, tempResult, operand);
+                result = SupportedOperations.doLogic(result, tempResult, operand.getType());
                 return;
             }
             throw new UnsupportedOperationException(String.format("operand: %s is not supported.", operand));

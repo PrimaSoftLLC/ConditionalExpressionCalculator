@@ -1,5 +1,9 @@
 package by.aurorasoft.expressioncalculator;
 
+import by.aurorasoft.expressioncalculator.model.EToken;
+import by.aurorasoft.expressioncalculator.model.ETokens;
+import by.aurorasoft.expressioncalculator.model.EType;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -8,18 +12,16 @@ import java.util.regex.Pattern;
  * check the expression
  * operations {@link #OPERATIONS}
  * RULES:
- * count of {@link SupportedOperations#OPEN_BRACKET} should be equals {@link SupportedOperations#CLOSE_BRACKET}
+ * count of OPEN_BRACKET should be equals CLOSE_BRACKET
  * count of numbers should be equals Operators - 1
- * after a number => (operations or {@link SupportedOperations#CLOSE_BRACKET})
- * after an operation => (number or {@link SupportedOperations#OPEN_BRACKET})
- * after an {@link SupportedOperations#OPEN_BRACKET} => (number or {@link SupportedOperations#OPEN_BRACKET})
- * after an {@link SupportedOperations#CLOSE_BRACKET} => (operation or {@link SupportedOperations#CLOSE_BRACKET})
+ * after a number => (operations or CLOSE_BRACKET)
+ * after an operation => (number or OPEN_BRACKET)
+ * after an OPEN_BRACKET => (number or OPEN_BRACKET)
+ * after an CLOSE_BRACKET => (operation or CLOSE_BRACKET)
  */
 public class ExprassionChecker {
 
-    private static final Set<String> OPERATIONS = new HashSet<>();
-    private static final Pattern numberPattern = Pattern.compile("-?\\d+(\\.\\d+)?");
-    private static final Pattern sensorTokenPattern = Pattern.compile("\\{\\d+}");
+    private static final Set<EType> OPERATIONS = new HashSet<>();
 
     private final ReversePolishNotationStack RPNcreator = new ReversePolishNotationStack();
 
@@ -32,11 +34,27 @@ public class ExprassionChecker {
     /**
      * @throws IllegalArgumentException if {@param raw} is not valid matematical expression
      */
-    public void check(String raw) {
-        final ExprassionIterator iterator = new ExprassionIterator(raw);
+    public void checkMath(String raw) {
+        checkCounts(raw);
+        List<EToken> tokens = RPNcreator.create(raw);
+        for (EToken t : tokens) {
+            if (SupportedOperations.isLogic(t.getType()) || SupportedOperations.isCondition(t.getType())) {
+                throw new IllegalArgumentException(String.format("Illegal operatio '%s' ", t.getType().detail));
+            }
+        }
+    }
+
+    public void checkLogic(String raw) {
+        checkCounts(raw);
+        conditionalCheck(raw);
+    }
+
+    private void checkCounts(String raw) {
+        final ExpressionIterator iterator = new ExpressionIterator(raw);
         final Counter counter = new Counter();
         while (iterator.hasNext()) {
-            Operand current = counter.count(iterator.next());
+            EToken t = iterator.next();
+            Operand current = counter.count(t);
             if (iterator.hasNext()) {
                 Operand next = counter.count(iterator.next());
                 grammarCheck(current, next, iterator.getIndex());
@@ -49,9 +67,6 @@ public class ExprassionChecker {
             }
         }
         counter.checkCounts();
-        if (isLogicExpression(raw)) {
-            conditionalCheck(raw);
-        }
     }
 
     private void grammarCheck(Operand current, Operand next, int index) {
@@ -88,37 +103,20 @@ public class ExprassionChecker {
     }
 
     private void conditionalCheck(String raw) {
-        Deque<String> stack = RPNcreator.create(raw);
-        Iterator<String> iterator = stack.iterator();
-        String prev = "prev";
-        while(iterator.hasNext()){
-            String current = iterator.next();
-            if((SupportedOperations.isCondition(prev) || SupportedOperations.isLogic(prev)) && SupportedOperations.isMath(current)){
+        List<EToken> tokens = RPNcreator.create(raw);
+        EToken prev = ETokens.create(")");
+        for (EToken t : tokens) {
+            if ((SupportedOperations.isCondition(prev.getType()) || SupportedOperations.isLogic(prev.getType())) && SupportedOperations.isMath(t.getType())) {
                 throw new IllegalArgumentException(String.format("Illegal logic expression - result is not boolean. " +
-                        "Wrong use operands '%s' and '%s'", prev, current));
+                        "Wrong use operands '%s' and '%s'", prev, t));
             }
-            prev = current;
+            prev = t;
         }
-        if (!SupportedOperations.isLogic(stack.getLast()) && !SupportedOperations.isCondition(stack.getLast())) {
+        if (!SupportedOperations.isLogic(tokens.get(tokens.size() - 1).getType()) && !SupportedOperations.isCondition(tokens.get(tokens.size() - 1).getType())) {
             throw new IllegalArgumentException(
                     String.format("Illegal logic expression - result is not boolean. Wrong use operand '%s'",
-                            stack.getLast()));
+                            tokens.get(tokens.size() - 1).getType().detail));
         }
-    }
-
-    private boolean isLogicExpression(String raw) {
-        for (String c : SupportedOperations.LOGIC) {
-            if (raw.contains(c)) {
-                return true;
-            }
-        }
-
-        for (String c : SupportedOperations.CONDITIONALS) {
-            if (raw.contains(c)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private enum Operand {
@@ -132,20 +130,20 @@ public class ExprassionChecker {
         int countNumbers = 0;
         int countOperations = 0;
 
-        Operand count(String r) {
-            if (OPERATIONS.contains(r)) {
+        Operand count(EToken r) {
+            if (OPERATIONS.contains(r.getType())) {
                 countOperations++;
                 return Operand.OPERATION;
             }
-            if (isNumeric(r)) {
+            if (r.is(EType.NUMB) || r.is(EType.TOKEN)) {
                 countNumbers++;
                 return Operand.NUMBER;
             }
-            if (r.equals(SupportedOperations.OPEN_BRACKET)) {
+            if (r.is(EType.OPEN_B)) {
                 countOpenBracket++;
                 return Operand.OPEN_BRACKET;
             }
-            if (r.equals(SupportedOperations.CLOSE_BRACKET)) {
+            if (r.is(EType.CLOSE_B)) {
                 countCloseBracket++;
                 return Operand.CLOSE_BRACKET;
             }
@@ -159,13 +157,6 @@ public class ExprassionChecker {
             if (countNumbers - 1 != countOperations) {
                 throw new IllegalArgumentException("Illegal count of numbers or operations");
             }
-        }
-
-        //todo unite numberPattern and sensorTokenPattern in one regexp
-        boolean isNumeric(String strNum) {
-            Matcher numb = numberPattern.matcher(strNum);
-            Matcher sensor = sensorTokenPattern.matcher(strNum);
-            return numb.matches() || sensor.matches();
         }
     }
 }
