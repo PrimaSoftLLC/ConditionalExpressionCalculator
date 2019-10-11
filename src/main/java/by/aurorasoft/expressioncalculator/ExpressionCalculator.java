@@ -92,14 +92,4 @@ public class ExpressionCalculator {
         }
         return result != null ? result : tempResult != null? tempResult: true;
     }
-
-    public static void main(String[] args) {
-        List<EToken> condition = new ReversePolishNotation().create("200.899>300.987");
-        ExpressionCalculator c = new ExpressionCalculator();
-        long s = System.currentTimeMillis();
-        for (int i = 0; i < 500000; i++) {
-            c.calculateConditional(condition);
-        }
-        System.out.println("ms: " + (System.currentTimeMillis() - s));
-    }
 }
