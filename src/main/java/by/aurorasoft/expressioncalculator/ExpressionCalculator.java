@@ -4,7 +4,6 @@ import by.aurorasoft.expressioncalculator.model.EToken;
 import by.aurorasoft.expressioncalculator.model.EType;
 
 import java.util.List;
-import java.util.Stack;
 
 /**
  * calculate math or conditional or logic expression.
@@ -30,17 +29,18 @@ public class ExpressionCalculator {
      * @return number as a result
      */
     public float calculateMath(List<EToken> tokens) {
-        Stack<Float> res = new Stack<>();
+        final float[] stack = new float[tokens.size()];
+        int i = 0;
         for (EToken t : tokens) {
-            if (!SupportedOperations.isMath(t.getType())) {
-                res.push(t.getValue());
+            if (t.is(EType.TOKEN) || t.is(EType.NUMB)) {
+                stack[i++] = t.getValue();
             } else {
-                float b = res.pop();
-                float a = res.pop();
-                res.push(SupportedOperations.calculate(a, b, t.getType()));
+                float b = stack[i-- - 1];
+                float a = stack[i-- - 1];
+                stack[i++] = SupportedOperations.calculate(a, b, t.getType());
             }
         }
-        return res.pop();
+        return stack[i-- - 1];
     }
 
     /**
@@ -61,21 +61,22 @@ public class ExpressionCalculator {
     public boolean calculateConditional(List<EToken> tokens) {
         Boolean result = null;
         Boolean tempResult = null;
-        final Stack<Float> stack = new Stack();
+        int i = 0;
+        final float[] stack = new float[tokens.size()];
         for (EToken t : tokens) {
             if (t.is(EType.TOKEN) || t.is(EType.NUMB)) {
-                stack.push(t.getValue());
+                stack[i++] = t.getValue();
                 continue;
             }
             if (SupportedOperations.isMath(t.getType())) {
-                float b = stack.pop();
-                float a = stack.pop();
-                stack.push(SupportedOperations.calculate(a, b, t.getType()));
+                float b = stack[i-- - 1];
+                float a = stack[i-- - 1];
+                stack[i++] = SupportedOperations.calculate(a, b, t.getType());
                 continue;
             }
             if (SupportedOperations.isCondition(t.getType())) {
-                float b = stack.pop();
-                float a = stack.pop();
+                float b = stack[i-- - 1];
+                float a = stack[i-- - 1];
                 result = tempResult;
                 tempResult = SupportedOperations.doCondition(a, b, t.getType());
                 continue;
@@ -90,5 +91,15 @@ public class ExpressionCalculator {
             throw new IllegalArgumentException(String.format("Illegal token: '%s'", t.getType().detail));
         }
         return result != null ? result : tempResult != null? tempResult: true;
+    }
+
+    public static void main(String[] args) {
+        List<EToken> condition = new ReversePolishNotation().create("200.899>300.987");
+        ExpressionCalculator c = new ExpressionCalculator();
+        long s = System.currentTimeMillis();
+        for (int i = 0; i < 500000; i++) {
+            c.calculateConditional(condition);
+        }
+        System.out.println("ms: " + (System.currentTimeMillis() - s));
     }
 }

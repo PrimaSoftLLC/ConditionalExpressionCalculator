@@ -24,7 +24,7 @@ public class ReversePolishNotation {
                 operations.pollLast();
                 continue;
             }
-            if (!SupportedOperations.PRIORITY.containsKey(t.getType())) {
+            if (!SupportedOperations.contains(t.getType())) {
                 exitStack.add(t);
             } else {
                 if (!operations.isEmpty() &&
