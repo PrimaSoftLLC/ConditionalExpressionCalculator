@@ -6,7 +6,7 @@ import org.junit.rules.ExpectedException;
 public class ExprassionCheckerTest {
 
     @Rule
-    public ExpectedException expectedEx = ExpectedException.none();
+    public final ExpectedException expectedEx = ExpectedException.none();
     private final ExprassionChecker checker = new ExprassionChecker();
 
     @Test

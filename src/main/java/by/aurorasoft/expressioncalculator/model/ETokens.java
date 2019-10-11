@@ -35,9 +35,9 @@ public class ETokens {
                     return new EToken(EType.OR);
             }
             if (s.startsWith("{")) {
-                return new EToken(EType.TOKEN, Long.valueOf(s.substring(1, s.length() - 1)));
+                return new EToken(EType.TOKEN, Long.parseLong(s.substring(1, s.length() - 1)));
             }
-            return new EToken(EType.NUMB, Float.valueOf(s));
+            return new EToken(EType.NUMB, Float.parseFloat(s));
         } catch (Exception e) {
             throw new IllegalArgumentException(String.format("Token: '%s' can't be converted", s));
         }

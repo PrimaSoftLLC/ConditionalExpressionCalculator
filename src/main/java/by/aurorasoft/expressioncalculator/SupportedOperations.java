@@ -22,7 +22,7 @@ public abstract class SupportedOperations {
             EType.DIV.detail.charAt(0), EType.OPEN_B.detail.charAt(0), EType.CLOSE_B.detail.charAt(0),
             EType.OR.detail.charAt(0), EType.AND.detail.charAt(0));
 
-    public static Map<EType, Integer> PRIORITY = new HashMap<>();
+    public static final Map<EType, Integer> PRIORITY = new HashMap<>();
     
     static {
         PRIORITY.put(EType.MULT, 4);

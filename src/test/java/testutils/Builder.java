@@ -13,6 +13,6 @@ public class Builder {
     }
 
     public static List<EToken> build(Collection<String> c){
-        return c.stream().map(s -> ETokens.create(s)).collect(Collectors.toList());
+        return c.stream().map(ETokens::create).collect(Collectors.toList());
     }
 }

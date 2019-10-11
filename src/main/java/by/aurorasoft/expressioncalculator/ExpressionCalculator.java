@@ -1,8 +1,10 @@
 package by.aurorasoft.expressioncalculator;
 
 import by.aurorasoft.expressioncalculator.model.EToken;
+import by.aurorasoft.expressioncalculator.model.EType;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Stack;
 
 /**
@@ -16,6 +18,7 @@ public class ExpressionCalculator {
     /**
      * Calculate math {@param expression}. Every {@param expression} convert
      * to Reverse Polish Notation {@link ReversePolishNotation}
+     *
      * @return number as a result
      */
     public float calculateMath(String expression) {
@@ -24,6 +27,7 @@ public class ExpressionCalculator {
 
     /**
      * Calculate math {@param expression} the Reverse Polish Notation {@link ReversePolishNotation}
+     *
      * @return number as a result
      */
     public float calculateMath(List<EToken> tokens) {
@@ -43,6 +47,7 @@ public class ExpressionCalculator {
     /**
      * Calculate conditional {@param expression}. Every {@param expression} convert
      * to Reverse Polish Notation {@link ReversePolishNotation}
+     *
      * @return boolean as a result
      */
     public boolean calculateConditional(String expression) {
@@ -51,59 +56,50 @@ public class ExpressionCalculator {
 
     /**
      * Calculate conditional {@param expression} the Reverse Polish Notation {@link ReversePolishNotation}
+     *
      * @return boolean as a result
      */
     public boolean calculateConditional(List<EToken> tokens) {
-        final Result result = new Result();
-        for (EToken t : tokens) {
-            if (SupportedOperations.contains(t.getType())) {
-                result.doOperation(t);
-            } else {
-                result.pushValue(t.getValue());
-            }
-        }
-        return result.getResult();
-    }
-
-    private final class Result {
         Boolean result = null;
         Boolean tempResult = null;
         final Stack<Float> stack = new Stack();
-
-        boolean getResult(){
-            if(result != null){
-                return result;
-            } else {
-                return tempResult != null? tempResult : true;
+        for (EToken t : tokens) {
+            if (t.is(EType.TOKEN) || t.is(EType.NUMB)) {
+                stack.push(t.getValue());
+                continue;
             }
-        }
-
-        void pushValue(float v) {
-            stack.push(v);
-        }
-
-        void doOperation(EToken operand) {
-            if (SupportedOperations.isMath(operand.getType())) {
+            if (SupportedOperations.isMath(t.getType())) {
                 float b = stack.pop();
                 float a = stack.pop();
-                stack.push(SupportedOperations.calculate(a, b, operand.getType()));
-                return;
+                stack.push(SupportedOperations.calculate(a, b, t.getType()));
+                continue;
             }
-            if (SupportedOperations.isCondition(operand.getType())) {
+            if (SupportedOperations.isCondition(t.getType())) {
                 float b = stack.pop();
                 float a = stack.pop();
                 result = tempResult;
-                tempResult = SupportedOperations.doCondition(a, b, operand.getType());
-                return;
+                tempResult = SupportedOperations.doCondition(a, b, t.getType());
+                continue;
             }
-            if (SupportedOperations.isLogic(operand.getType())) {
-                if(result == null){
+            if (SupportedOperations.isLogic(t.getType())) {
+                if (result == null) {
                     result = tempResult;
                 }
-                result = SupportedOperations.doLogic(result, tempResult, operand.getType());
-                return;
+                result = SupportedOperations.doLogic(result, tempResult, t.getType());
+                continue;
             }
-            throw new UnsupportedOperationException(String.format("operand: %s is not supported.", operand));
+            throw new IllegalArgumentException(String.format("Illegal token: '%s'", t.getType().detail));
         }
+        return result != null ? result : tempResult != null? tempResult: true;
+    }
+
+    public static void main(String[] args) {
+        List<EToken> condition = new ReversePolishNotation().create("200>0");
+        ExpressionCalculator c = new ExpressionCalculator();
+        long s = System.currentTimeMillis();
+        for (int i = 0; i < 1000000; i++) {
+            c.calculateConditional(condition);
+        }
+        System.out.println("ms: " + (System.currentTimeMillis() - s));
     }
 }

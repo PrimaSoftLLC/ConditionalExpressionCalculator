@@ -3,8 +3,6 @@ package by.aurorasoft.expressioncalculator;
 import by.aurorasoft.expressioncalculator.model.EToken;
 import by.aurorasoft.expressioncalculator.model.ETokens;
 
-import javax.swing.border.EtchedBorder;
-
 /**
  * iterate by Math or Conditional or Logic expression
  */
@@ -28,34 +26,34 @@ public class ExpressionIterator {
      * @return next operand from {@link #raw}
      */
     public EToken next() {
-        String r = new String();
+        StringBuilder r = new StringBuilder();
         //read digit
         if (Character.isDigit(raw.charAt(index))) {
             while (index <= length - 1 && (Character.isDigit(raw.charAt(index)) || raw.charAt(index) == '.')) {
-                r += raw.charAt(index++);
+                r.append(raw.charAt(index++));
             }
-            return ETokens.create(r);
+            return ETokens.create(r.toString());
         }
         //read sensor Id for example {113}
         if (raw.charAt(index) == SupportedOperations.START_SENSOR_ID_TOKEN) {
             while (index <= length - 1 && raw.charAt(index) != SupportedOperations.END_SENSOR_ID_TOKEN) {
-                r += raw.charAt(index++);
+                r.append(raw.charAt(index++));
             }
-            r += raw.charAt(index++);
-            return ETokens.create(r);
+            r.append(raw.charAt(index++));
+            return ETokens.create(r.toString());
         }
 
         if (SupportedOperations.UNO_OPERATIONS.contains(raw.charAt(index))) {
-            r += raw.charAt(index++);
-            return ETokens.create(r);
+            r.append(raw.charAt(index++));
+            return ETokens.create(r.toString());
         }
 
         while (index <= length - 1 && !Character.isDigit(raw.charAt(index))
                 && raw.charAt(index) != SupportedOperations.START_SENSOR_ID_TOKEN
                 && !SupportedOperations.UNO_OPERATIONS.contains(raw.charAt(index))) {
-            r += raw.charAt(index++);
+            r.append(raw.charAt(index++));
         }
-        return ETokens.create(r);
+        return ETokens.create(r.toString());
     }
 
     /**

@@ -28,21 +28,21 @@ public class ExpressionCalculatorTest {
 
     @Test
     public void calculateConditional() {
-        assertEquals(true, calculator.calculateConditional("10>0"));
-        assertEquals(false, calculator.calculateConditional("10>100"));
-        assertEquals(true, calculator.calculateConditional("100>=100"));
-        assertEquals(true, calculator.calculateConditional("100=100"));
-        assertEquals(false, calculator.calculateConditional("100!=100"));
-        assertEquals(false, calculator.calculateConditional("100<90"));
-        assertEquals(true, calculator.calculateConditional("100<120"));
-        assertEquals(false, calculator.calculateConditional("100+100<120"));
-        assertEquals(true, calculator.calculateConditional("100+100<120*2"));
-        assertEquals(true, calculator.calculateConditional("100+100!=120*2/2"));
-        assertEquals(true, calculator.calculateConditional("100+100=100*2"));
-        assertEquals(true, calculator.calculateConditional("100>0&10=10"));
-        assertEquals(false, calculator.calculateConditional("100>0&10=11"));
-        assertEquals(false, calculator.calculateConditional("0>0&0=0"));
-        assertEquals(true, calculator.calculateConditional("0<=0"));
+        assertTrue(calculator.calculateConditional("10>0"));
+        assertFalse(calculator.calculateConditional("10>100"));
+        assertTrue(calculator.calculateConditional("100>=100"));
+        assertTrue(calculator.calculateConditional("100=100"));
+        assertFalse(calculator.calculateConditional("100!=100"));
+        assertFalse(calculator.calculateConditional("100<90"));
+        assertTrue(calculator.calculateConditional("100<120"));
+        assertFalse(calculator.calculateConditional("100+100<120"));
+        assertTrue(calculator.calculateConditional("100+100<120*2"));
+        assertTrue(calculator.calculateConditional("100+100!=120*2/2"));
+        assertTrue(calculator.calculateConditional("100+100=100*2"));
+        assertTrue(calculator.calculateConditional("100>0&10=10"));
+        assertFalse(calculator.calculateConditional("100>0&10=11"));
+        assertFalse(calculator.calculateConditional("0>0&0=0"));
+        assertTrue(calculator.calculateConditional("0<=0"));
     }
 
     @Test

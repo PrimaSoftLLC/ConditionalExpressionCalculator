@@ -121,7 +121,7 @@ public class ExprassionChecker {
         OPERATION, OPEN_BRACKET, CLOSE_BRACKET, NUMBER
     }
 
-    private class Counter {
+    private static class Counter {
 
         int countOpenBracket = 0;
         int countCloseBracket = 0;
