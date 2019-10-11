@@ -4,7 +4,6 @@ import by.aurorasoft.expressioncalculator.model.EToken;
 import by.aurorasoft.expressioncalculator.model.EType;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Stack;
 
 /**
@@ -91,15 +90,5 @@ public class ExpressionCalculator {
             throw new IllegalArgumentException(String.format("Illegal token: '%s'", t.getType().detail));
         }
         return result != null ? result : tempResult != null? tempResult: true;
-    }
-
-    public static void main(String[] args) {
-        List<EToken> condition = new ReversePolishNotation().create("200>0");
-        ExpressionCalculator c = new ExpressionCalculator();
-        long s = System.currentTimeMillis();
-        for (int i = 0; i < 1000000; i++) {
-            c.calculateConditional(condition);
-        }
-        System.out.println("ms: " + (System.currentTimeMillis() - s));
     }
 }
