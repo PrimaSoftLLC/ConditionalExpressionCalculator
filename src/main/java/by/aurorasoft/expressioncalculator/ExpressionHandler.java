@@ -8,8 +8,6 @@ import java.util.Set;
 
 public class ExpressionHandler {
 
-    private final ReversePolishNotation reversePolishNotation = new ReversePolishNotation();
-
     /**
      * Iterate by {@param list} if string starts with {@link SupportedOperations#START_SENSOR_ID_TOKEN}
      * then get token number.
@@ -35,6 +33,6 @@ public class ExpressionHandler {
      * @return Set of token numbers
      */
     public Set<Long> getTokenIds(String s) {
-        return s != null ? getTokenIds(reversePolishNotation.create(s)) : new HashSet<>();
+        return s != null ? getTokenIds(ReversePolishNotation.create(s)) : new HashSet<>();
     }
 }

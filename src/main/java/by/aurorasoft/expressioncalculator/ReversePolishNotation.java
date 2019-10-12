@@ -7,7 +7,7 @@ import java.util.*;
 
 public class ReversePolishNotation {
 
-    public List<EToken> create(ExpressionIterator iterator) {
+    public static List<EToken> create(ExpressionIterator iterator) {
         final List<EToken> exitStack = new LinkedList<>();
         final Deque<EToken> operations = new LinkedList<>();
 
@@ -56,7 +56,7 @@ public class ReversePolishNotation {
      *                         Can contains dinamical data - token number in brackets {123}.
      * @return Stack of strings with reverse polish notation
      */
-    public List<EToken> create(String stringExpression) {
+    public static List<EToken> create(String stringExpression) {
         final ExpressionIterator rawExpr = new ExpressionIterator(stringExpression);
         return create(rawExpr);
     }

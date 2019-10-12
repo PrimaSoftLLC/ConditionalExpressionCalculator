@@ -11,8 +11,6 @@ import java.util.List;
  */
 public class ExpressionCalculator {
 
-    private final ReversePolishNotation reversePolishNotation = new ReversePolishNotation();
-
     /**
      * Calculate math {@param expression}. Every {@param expression} convert
      * to Reverse Polish Notation {@link ReversePolishNotation}
@@ -20,7 +18,7 @@ public class ExpressionCalculator {
      * @return number as a result
      */
     public float calculateMath(String expression) {
-        return calculateMath(reversePolishNotation.create(expression));
+        return calculateMath(ReversePolishNotation.create(expression));
     }
 
     /**
@@ -50,7 +48,7 @@ public class ExpressionCalculator {
      * @return boolean as a result
      */
     public boolean calculateConditional(String expression) {
-        return calculateConditional(reversePolishNotation.create(expression));
+        return calculateConditional(ReversePolishNotation.create(expression));
     }
 
     /**

@@ -21,8 +21,6 @@ public class ExprassionChecker {
 
     private static final Set<EType> OPERATIONS = new HashSet<>();
 
-    private final ReversePolishNotation RPNcreator = new ReversePolishNotation();
-
     static {
         OPERATIONS.addAll(SupportedOperations.MATH);
         OPERATIONS.addAll(SupportedOperations.CONDITIONALS);
@@ -34,7 +32,7 @@ public class ExprassionChecker {
      */
     public void checkMath(String raw) {
         checkCounts(raw);
-        List<EToken> tokens = RPNcreator.create(raw);
+        List<EToken> tokens = ReversePolishNotation.create(raw);
         for (EToken t : tokens) {
             if (SupportedOperations.isLogic(t.getType()) || SupportedOperations.isCondition(t.getType())) {
                 throw new IllegalArgumentException(String.format("Illegal operatio '%s' ", t.getType().detail));
@@ -101,7 +99,7 @@ public class ExprassionChecker {
     }
 
     private void conditionalCheck(String raw) {
-        List<EToken> tokens = RPNcreator.create(raw);
+        List<EToken> tokens = ReversePolishNotation.create(raw);
         EToken prev = ETokens.create(")");
         for (EToken t : tokens) {
             if ((SupportedOperations.isCondition(prev.getType()) || SupportedOperations.isLogic(prev.getType())) && SupportedOperations.isMath(t.getType())) {
