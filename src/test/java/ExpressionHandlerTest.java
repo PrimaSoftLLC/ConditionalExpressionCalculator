@@ -1,4 +1,4 @@
-import by.aurorasoft.expressioncalculator.ExpressionHandler;
+import by.aurorasoft.expressioncalculator.ExpressionUtils;
 import org.junit.Test;
 
 import java.util.Set;
@@ -7,7 +7,7 @@ import static org.junit.Assert.assertEquals;
 
 public class ExpressionHandlerTest {
 
-    private final ExpressionHandler handler = new ExpressionHandler();
+    private final ExpressionUtils handler = new ExpressionUtils();
 
     @Test
     public void testGetSensorIds() {

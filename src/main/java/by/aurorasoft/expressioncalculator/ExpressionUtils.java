@@ -3,10 +3,11 @@ package by.aurorasoft.expressioncalculator;
 import by.aurorasoft.expressioncalculator.model.EToken;
 import by.aurorasoft.expressioncalculator.model.EType;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ExpressionHandler {
+public class ExpressionUtils {
 
     /**
      * Iterate by {@param list} if string starts with {@link SupportedOperations#START_SENSOR_ID_TOKEN}
@@ -14,7 +15,7 @@ public class ExpressionHandler {
      *
      * @return Set of token numbers
      */
-    public Set<Long> getTokenIds(Iterable<EToken> tokens) {
+    public static Set<Long> getTokenIds(Iterable<EToken> tokens) {
         Set<Long> r = new HashSet<>();
         if (tokens == null) {
             return r;
@@ -32,7 +33,21 @@ public class ExpressionHandler {
      *
      * @return Set of token numbers
      */
-    public Set<Long> getTokenIds(String s) {
+    public static Set<Long> getTokenIds(String s) {
         return s != null ? getTokenIds(ReversePolishNotation.create(s)) : new HashSet<>();
+    }
+
+    /**
+     * convert {@param raw} to string token Arrays;
+     */
+    public static String[] toArray(String raw) {
+        String[] arr = new String[raw.length()];
+        int i = 0;
+        ExpressionIterator iterator = new ExpressionIterator(raw);
+        while(iterator.hasNext()){
+            String s  = iterator.nextString();
+            arr[i++] = s;
+        }
+        return Arrays.copyOfRange(arr, 0, i);
     }
 }

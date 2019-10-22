@@ -49,10 +49,10 @@ public class ExprassionChecker {
         final ExpressionIterator iterator = new ExpressionIterator(raw);
         final Counter counter = new Counter();
         while (iterator.hasNext()) {
-            EToken t = iterator.next();
+            EToken t = iterator.nextEToken();
             Operand current = counter.count(t);
             if (iterator.hasNext()) {
-                Operand next = counter.count(iterator.next());
+                Operand next = counter.count(iterator.nextEToken());
                 grammarCheck(current, next, iterator.getIndex());
             } else {
                 if (current != Operand.NUMBER && current != Operand.CLOSE_BRACKET) {

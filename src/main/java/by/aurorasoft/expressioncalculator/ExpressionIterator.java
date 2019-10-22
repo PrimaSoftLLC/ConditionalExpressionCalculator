@@ -25,14 +25,19 @@ public class ExpressionIterator {
      * Iterate by {@link #raw} while {@link #index} < {@link #length}
      * @return next operand from {@link #raw}
      */
-    public EToken next() {
+    public EToken nextEToken() {
+        return ETokens.create(nextString());
+    }
+
+    public String nextString(){
+
         StringBuilder r = new StringBuilder();
         //read digit
         if (Character.isDigit(raw.charAt(index))) {
             while (index <= length - 1 && (Character.isDigit(raw.charAt(index)) || raw.charAt(index) == '.')) {
                 r.append(raw.charAt(index++));
             }
-            return ETokens.create(r.toString());
+            return r.toString();
         }
         //read sensor Id for example {113}
         if (raw.charAt(index) == SupportedOperations.START_SENSOR_ID_TOKEN) {
@@ -40,12 +45,12 @@ public class ExpressionIterator {
                 r.append(raw.charAt(index++));
             }
             r.append(raw.charAt(index++));
-            return ETokens.create(r.toString());
+            return r.toString();
         }
 
         if (SupportedOperations.UNO_OPERATIONS.contains(raw.charAt(index))) {
             r.append(raw.charAt(index++));
-            return ETokens.create(r.toString());
+            return r.toString();
         }
 
         while (index <= length - 1 && !Character.isDigit(raw.charAt(index))
@@ -53,7 +58,7 @@ public class ExpressionIterator {
                 && !SupportedOperations.UNO_OPERATIONS.contains(raw.charAt(index))) {
             r.append(raw.charAt(index++));
         }
-        return ETokens.create(r.toString());
+        return r.toString();
     }
 
     /**

@@ -17,7 +17,7 @@ public class ExpressionCalculator {
      *
      * @return number as a result
      */
-    public float calculateMath(String expression) {
+    public static float calculateMath(String expression) {
         return calculateMath(ReversePolishNotation.create(expression));
     }
 
@@ -26,7 +26,7 @@ public class ExpressionCalculator {
      *
      * @return number as a result
      */
-    public float calculateMath(List<EToken> tokens) {
+    public static float calculateMath(List<EToken> tokens) {
         final float[] stack = new float[tokens.size()];
         int i = 0;
         for (EToken t : tokens) {
@@ -56,7 +56,7 @@ public class ExpressionCalculator {
      *
      * @return boolean as a result
      */
-    public boolean calculateConditional(List<EToken> tokens) {
+    public static boolean calculateConditional(List<EToken> tokens) {
         Boolean result = null;
         Boolean tempResult = null;
         int i = 0;
