@@ -1,17 +1,22 @@
-import by.aurorasoft.expressioncalculator.ExprassionChecker;
+import by.aurorasoft.expressioncalculator.ExpressionChecker;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-public class ExprassionCheckerTest {
+public class ExpressionCheckerTest {
 
     @Rule
     public final ExpectedException expectedEx = ExpectedException.none();
-    private final ExprassionChecker checker = new ExprassionChecker();
+    private final ExpressionChecker checker = new ExpressionChecker();
 
     @Test
     public void check() {
         checker.checkMath("2+2");
+    }
+
+    @Test
+    public void checkMathNull() {
+        checker.checkMath(null);
     }
 
     @Test
@@ -69,5 +74,10 @@ public class ExprassionCheckerTest {
     @Test(expected = IllegalArgumentException.class)
     public void check12() {
         checker.checkLogic("10+10)");
+    }
+
+    @Test
+    public void checkLogicNull() {
+        checker.checkLogic(null);
     }
 }

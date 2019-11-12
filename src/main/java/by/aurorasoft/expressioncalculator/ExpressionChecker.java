@@ -17,7 +17,7 @@ import java.util.*;
  * after an OPEN_BRACKET => (number or OPEN_BRACKET)
  * after an CLOSE_BRACKET => (operation or CLOSE_BRACKET)
  */
-public class ExprassionChecker {
+public class ExpressionChecker {
 
     private static final Set<EType> OPERATIONS = new HashSet<>();
 
@@ -31,6 +31,9 @@ public class ExprassionChecker {
      * @throws IllegalArgumentException if {@param raw} is not valid matematical expression
      */
     public void checkMath(String raw) {
+        if (raw == null) {
+            return;
+        }
         checkCounts(raw);
         List<EToken> tokens = ReversePolishNotation.create(raw);
         for (EToken t : tokens) {
@@ -41,6 +44,9 @@ public class ExprassionChecker {
     }
 
     public void checkLogic(String raw) {
+        if (raw == null) {
+            return;
+        }
         checkCounts(raw);
         conditionalCheck(raw);
     }
