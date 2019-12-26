@@ -1,10 +1,11 @@
 package by.aurorasoft.expressioncalculator;
 
-import by.aurorasoft.expressioncalculator.model.EToken;
-import by.aurorasoft.expressioncalculator.model.ETokens;
-import by.aurorasoft.expressioncalculator.model.EType;
+import by.aurorasoft.expressioncalculator.model.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * check the expression
@@ -34,8 +35,9 @@ public class ExpressionChecker {
         if (raw == null) {
             return;
         }
-        checkCounts(raw);
-        List<EToken> tokens = ReversePolishNotation.create(raw);
+        List<RawToken> dummyRawTokens = createDummyRawTokenList(raw);
+        checkCounts(raw, dummyRawTokens);
+        List<EToken> tokens = ReversePolishNotation.create(raw, dummyRawTokens);
         for (EToken t : tokens) {
             if (SupportedOperations.isLogic(t.getType()) || SupportedOperations.isCondition(t.getType())) {
                 throw new IllegalArgumentException(String.format("Illegal operatio '%s' ", t.getType().detail));
@@ -43,16 +45,43 @@ public class ExpressionChecker {
         }
     }
 
+    private List<RawToken> createDummyRawTokenList(String raw) {
+        List<RawToken> rawTokens = new ArrayList<>();
+        Long dummyId = 1l;
+        int index = 0;
+        while (index < raw.length() - 1) {
+            StringBuilder r = new StringBuilder();
+            if (raw.charAt(index) == SupportedOperations.START_SENSOR_ID_TOKEN) {
+                index++; // skip '{'
+                while (index <= raw.length() - 1 && raw.charAt(index) != SupportedOperations.END_SENSOR_ID_TOKEN) {
+                    r.append(raw.charAt(index++));
+                }
+                // skip '}'
+                if(index > raw.length() - 1){
+                    index--;
+                }
+                if(raw.charAt(index++) != '}'){
+                    throw new IllegalArgumentException(String.format("Wrong expression: %s not found closing '}'", r.toString()));
+                }
+                rawTokens.add(new RawTokenImpl(dummyId++, r.toString()));
+            } else {
+                index++;
+            }
+        }
+        return rawTokens;
+    }
+
     public void checkLogic(String raw) {
         if (raw == null) {
             return;
         }
-        checkCounts(raw);
-        conditionalCheck(raw);
+        List<RawToken> dummyTokens = createDummyRawTokenList(raw);
+        checkCounts(raw, dummyTokens);
+        conditionalCheck(raw, dummyTokens);
     }
 
-    private void checkCounts(String raw) {
-        final ExpressionIterator iterator = new ExpressionIterator(raw);
+    private void checkCounts(String raw, List<RawToken> rawTokens) {
+        final ExpressionIterator iterator = new ExpressionIterator(raw, rawTokens);
         final Counter counter = new Counter();
         while (iterator.hasNext()) {
             EToken t = iterator.nextEToken();
@@ -104,8 +133,8 @@ public class ExpressionChecker {
         }
     }
 
-    private void conditionalCheck(String raw) {
-        List<EToken> tokens = ReversePolishNotation.create(raw);
+    private void conditionalCheck(String raw, List<RawToken> rawTokens) {
+        List<EToken> tokens = ReversePolishNotation.create(raw, rawTokens);
         EToken prev = ETokens.create(")");
         for (EToken t : tokens) {
             if ((SupportedOperations.isCondition(prev.getType()) || SupportedOperations.isLogic(prev.getType())) && SupportedOperations.isMath(t.getType())) {

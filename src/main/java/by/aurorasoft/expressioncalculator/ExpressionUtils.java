@@ -3,7 +3,6 @@ package by.aurorasoft.expressioncalculator;
 import by.aurorasoft.expressioncalculator.model.EToken;
 import by.aurorasoft.expressioncalculator.model.EType;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,26 +27,26 @@ public class ExpressionUtils {
         return r;
     }
 
-    /**
-     * Handle {@param list} Firstly convert {@param s} to Deque<String> and then get token by {@link #getTokenIds(Iterable)}
-     *
-     * @return Set of token numbers
-     */
-    public static Set<Long> getTokenIds(String s) {
-        return s != null ? getTokenIds(ReversePolishNotation.create(s)) : new HashSet<>();
-    }
-
-    /**
-     * convert {@param raw} to string token Arrays;
-     */
-    public static String[] toArray(String raw) {
-        String[] arr = new String[raw.length()];
-        int i = 0;
-        ExpressionIterator iterator = new ExpressionIterator(raw);
-        while(iterator.hasNext()){
-            String s  = iterator.nextString();
-            arr[i++] = s;
-        }
-        return Arrays.copyOfRange(arr, 0, i);
-    }
+//    /**
+//     * Handle {@param list} Firstly convert {@param s} to Deque<String> and then get token by {@link #getTokenIds(Iterable)}
+//     *
+//     * @return Set of token numbers
+//     */
+//    public static Set<Long> getTokenIds(String s) {
+//        return s != null ? getTokenIds(ReversePolishNotation.create(s)) : new HashSet<>();
+//    }
+//
+//    /**
+//     * convert {@param raw} to string token Arrays;
+//     */
+//    public static String[] toArray(String raw) {
+//        String[] arr = new String[raw.length()];
+//        int i = 0;
+//        ExpressionIterator iterator = new ExpressionIterator(raw);
+//        while(iterator.hasNext()){
+//            String s  = iterator.nextString();
+//            arr[i++] = s;
+//        }
+//        return Arrays.copyOfRange(arr, 0, i);
+//    }
 }

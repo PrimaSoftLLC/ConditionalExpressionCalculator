@@ -3,6 +3,7 @@ package by.aurorasoft.expressioncalculator;
 import by.aurorasoft.expressioncalculator.model.EToken;
 import by.aurorasoft.expressioncalculator.model.ETokens;
 import by.aurorasoft.expressioncalculator.model.EType;
+import by.aurorasoft.expressioncalculator.model.RawToken;
 
 import java.util.*;
 
@@ -64,41 +65,42 @@ public class ReversePolishNotation {
      *                         Can contains dinamical data - token number in brackets {123}.
      * @return Stack of strings with reverse polish notation
      */
-    public static List<EToken> create(String stringExpression) {
-        final ExpressionIterator rawExpr = new ExpressionIterator(stringExpression);
+    public static List<EToken> create(String stringExpression, List<RawToken> rawTokens) {
+        final ExpressionIterator rawExpr = new ExpressionIterator(stringExpression, rawTokens);
         return create(rawExpr);
     }
 
-    public static List<EToken> create(String[] operands) {
-        final List<EToken> exitStack = new ArrayList<>(operands.length);
-        int i = 0;
-        final EToken[] operations = new EToken[operands.length/2 + 1];
-        for (String s : operands) {
-            EToken t = ETokens.create(s);
-            if (t.is(EType.OPEN_B)) {
-                operations[i++] = t;
-                continue;
-            }
-            if (t.is(EType.CLOSE_B)) {
-                while (!operations[i - 1].is(EType.OPEN_B)) {
-                    exitStack.add(operations[i-- - 1]);
-                }
-                i--;
-                continue;
-            }
-            if (t.is(EType.NUMB) || t.is(EType.TOKEN)) {
-                exitStack.add(t);
-            } else {
-                if (i != 0 &&
-                        SupportedOperations.PRIORITY.get(operations[i - 1].getType()) >= SupportedOperations.PRIORITY.get(t.getType())) {
-                    exitStack.add(operations[i-- - 1]);
-                }
-                operations[i++] = t;
-            }
-        }
-        while (i != 0) {
-            exitStack.add(operations[i-- - 1]);
-        }
-        return exitStack;
-    }
+//    @Deprecated
+//    private static List<EToken> create(String[] operands, List<RawToken> rawTokens) {
+//        final List<EToken> exitStack = new ArrayList<>(operands.length);
+//        int i = 0;
+//        final EToken[] operations = new EToken[operands.length/2 + 1];
+//        for (String s : operands) {
+//            EToken t = ETokens.create(s);
+//            if (t.is(EType.OPEN_B)) {
+//                operations[i++] = t;
+//                continue;
+//            }
+//            if (t.is(EType.CLOSE_B)) {
+//                while (!operations[i - 1].is(EType.OPEN_B)) {
+//                    exitStack.add(operations[i-- - 1]);
+//                }
+//                i--;
+//                continue;
+//            }
+//            if (t.is(EType.NUMB) || t.is(EType.TOKEN)) {
+//                exitStack.add(t);
+//            } else {
+//                if (i != 0 &&
+//                        SupportedOperations.PRIORITY.get(operations[i - 1].getType()) >= SupportedOperations.PRIORITY.get(t.getType())) {
+//                    exitStack.add(operations[i-- - 1]);
+//                }
+//                operations[i++] = t;
+//            }
+//        }
+//        while (i != 0) {
+//            exitStack.add(operations[i-- - 1]);
+//        }
+//        return exitStack;
+//    }
 }

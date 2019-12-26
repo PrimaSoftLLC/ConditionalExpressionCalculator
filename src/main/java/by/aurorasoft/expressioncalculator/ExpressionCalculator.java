@@ -11,15 +11,15 @@ import java.util.List;
  */
 public class ExpressionCalculator {
 
-    /**
-     * Calculate math {@param expression}. Every {@param expression} convert
-     * to Reverse Polish Notation {@link ReversePolishNotation}
-     *
-     * @return number as a result
-     */
-    public static float calculateMath(String expression) {
-        return calculateMath(ReversePolishNotation.create(expression));
-    }
+//    /**
+//     * Calculate math {@param expression}. Every {@param expression} convert
+//     * to Reverse Polish Notation {@link ReversePolishNotation}
+//     *
+//     * @return number as a result
+//     */
+//    public static float calculateMath(String expression) {
+//        return calculateMath(ReversePolishNotation.create(expression));
+//    }
 
     /**
      * Calculate math {@param expression} the Reverse Polish Notation {@link ReversePolishNotation}
@@ -41,15 +41,15 @@ public class ExpressionCalculator {
         return stack[i-- - 1];
     }
 
-    /**
-     * Calculate conditional {@param expression}. Every {@param expression} convert
-     * to Reverse Polish Notation {@link ReversePolishNotation}
-     *
-     * @return boolean as a result
-     */
-    public boolean calculateConditional(String expression) {
-        return calculateConditional(ReversePolishNotation.create(expression));
-    }
+//    /**
+//     * Calculate conditional {@param expression}. Every {@param expression} convert
+//     * to Reverse Polish Notation {@link ReversePolishNotation}
+//     *
+//     * @return boolean as a result
+//     */
+//    public boolean calculateConditional(String expression) {
+//        return calculateConditional(ReversePolishNotation.create(expression));
+//    }
 
     /**
      * Calculate conditional {@param expression} the Reverse Polish Notation {@link ReversePolishNotation}

@@ -40,6 +40,11 @@ public class ExpressionCheckerTest {
     }
 
     @Test
+    public void checkMathSensorsIsString() {
+        checker.checkLogic("({датчик1}>{датчик2})|({датчик3}+{датчик4})");
+    }
+
+    @Test
     public void check6() {
         expectedEx.expect(IllegalArgumentException.class);
         expectedEx.expectMessage("Illegal logic expression - result is not boolean. Wrong use operand '+'");
@@ -75,6 +80,18 @@ public class ExpressionCheckerTest {
     public void check12() {
         checker.checkLogic("10+10)");
     }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void check13() {
+        checker.checkLogic("{10+10)");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void check14() {
+        checker.checkLogic("(10}+10)");
+    }
+
 
     @Test
     public void checkLogicNull() {
