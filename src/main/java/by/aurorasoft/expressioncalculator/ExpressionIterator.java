@@ -20,7 +20,7 @@ public class ExpressionIterator {
         if (raw == null) {
             this.raw = "";
         } else {
-            this.raw = raw.replaceAll(" ", "");
+            this.raw = raw;
         }
         this.length = this.raw.length();
         if (rawTokens == null) {

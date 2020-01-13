@@ -44,8 +44,8 @@ public class ReversePolishNotationTest {
 
     @Test
     public void test4() {
-        List<RawToken> rawTokens = List.of(new RawTokenImpl(123l, "rpm-sensor"));
-        List<EToken> actual = ReversePolishNotation.create("(6+{rpm-sensor})", rawTokens);
+        List<RawToken> rawTokens = List.of(new RawTokenImpl(123l, "rpm sensor"));
+        List<EToken> actual = ReversePolishNotation.create("(6+{rpm sensor})", rawTokens);
         assertEquals(build(List.of("6", "{123}", "+")), actual);
     }
 
