@@ -29,20 +29,47 @@ public class ExpressionChecker {
     }
 
     /**
+     * @returns return corrected expression
      * @throws IllegalArgumentException if {@param raw} is not valid matematical expression
      */
-    public void checkMath(String raw) {
+    public String checkMath(String raw) {
         if (raw == null) {
-            return;
+            return raw;
         }
+        raw = removeRedundantSpaces(raw);
         List<RawToken> dummyRawTokens = createDummyRawTokenList(raw);
         checkCounts(raw, dummyRawTokens);
         List<EToken> tokens = ReversePolishNotation.create(raw, dummyRawTokens);
         for (EToken t : tokens) {
             if (SupportedOperations.isLogic(t.getType()) || SupportedOperations.isCondition(t.getType())) {
-                throw new IllegalArgumentException(String.format("Illegal operatio '%s' ", t.getType().detail));
+                throw new IllegalArgumentException(String.format("Illegal operation '%s' ", t.getType().detail));
             }
         }
+        return raw;
+    }
+
+    /**
+     * Spaces available only into braces '{' '}' in another places spaces deleted
+     * "{sensor one} + {sensor two} - 2" to "{sensor one}+{sensor two}-2"
+     */
+    private String removeRedundantSpaces(String raw) {
+        StringBuilder stringBuilder = new StringBuilder(raw.trim());
+        boolean isSensorToken = false;
+        for (int i = 0; i <stringBuilder.length(); i++) {
+            char ch = stringBuilder.charAt(i);
+            if(ch == SupportedOperations.START_SENSOR_ID_TOKEN){
+                isSensorToken = true;
+                continue;
+            }
+            if(ch == SupportedOperations.END_SENSOR_ID_TOKEN){
+                isSensorToken = false;
+                continue;
+            }
+            if(!isSensorToken && ch == ' '){
+                stringBuilder.deleteCharAt(i--);
+            }
+        }
+        return stringBuilder.toString();
     }
 
     private List<RawToken> createDummyRawTokenList(String raw) {
@@ -71,13 +98,19 @@ public class ExpressionChecker {
         return rawTokens;
     }
 
-    public void checkLogic(String raw) {
+    /**
+     * @returns return corrected expression
+     * @throws IllegalArgumentException if {@param raw} is not valid logic expression
+     */
+    public String checkLogic(String raw) {
         if (raw == null) {
-            return;
+            return raw;
         }
+        raw = removeRedundantSpaces(raw);
         List<RawToken> dummyTokens = createDummyRawTokenList(raw);
         checkCounts(raw, dummyTokens);
         conditionalCheck(raw, dummyTokens);
+        return raw;
     }
 
     private void checkCounts(String raw, List<RawToken> rawTokens) {

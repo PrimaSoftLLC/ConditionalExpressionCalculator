@@ -214,7 +214,7 @@ public class ExpressionIteratorTest {
     @Test
     public void test19spaces() {
         List<RawToken> rawTokens = List.of(new RawTokenImpl(112l, "sensor1"), new RawTokenImpl(113l, "sensor2"));
-        ExpressionIterator expressionIterator = new ExpressionIterator("({sensor1} > 10) | ({sensor2} < 30)", rawTokens);
+        ExpressionIterator expressionIterator = new ExpressionIterator("({sensor1}>10)|({sensor2}<30)", rawTokens);
         assertEquals(build("("), expressionIterator.nextEToken());
         assertEquals(build("{112}"), expressionIterator.nextEToken());
         assertEquals(build(">"), expressionIterator.nextEToken());

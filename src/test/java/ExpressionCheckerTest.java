@@ -3,6 +3,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import static org.junit.Assert.assertEquals;
+
 public class ExpressionCheckerTest {
 
     @Rule
@@ -90,6 +92,19 @@ public class ExpressionCheckerTest {
     @Test(expected = IllegalArgumentException.class)
     public void check14() {
         checker.checkLogic("(10}+10)");
+    }
+
+    @Test
+    public void checkSpaces() {
+        assertEquals("{s}+10", checker.checkMath("{s}   + 10"));
+        assertEquals("{s}+10", checker.checkMath(" {s}   + 10 "));
+        assertEquals("{s}+10", checker.checkMath("  {s}   + 10  "));
+        assertEquals("{sensor one}+10+3+{sensor one rpm }", checker.checkMath("{sensor one}   + 10 + 3 + {sensor one rpm }"));
+
+        assertEquals("({s}+10)>345", checker.checkLogic("({s}   + 10) > 345"));
+        assertEquals("({s}+10)<456", checker.checkLogic(" ( {s}   + 10 )    < 456 "));
+        assertEquals("({s}+10)>=45", checker.checkLogic("  ({s}   + 10 )  >= 45 "));
+        assertEquals("({sensor one}+10+3+{sensor one rpm })!=5", checker.checkLogic("( {sensor one}   + 10 + 3 + {sensor one rpm } ) !=  5 "));
     }
 
 
