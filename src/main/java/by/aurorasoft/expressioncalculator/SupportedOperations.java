@@ -8,6 +8,10 @@ import java.util.Set;
 
 public abstract class SupportedOperations {
 
+    public static final char PARAM_TOKEN = '#';
+
+    public static final Set<String> AVAILABLE_PARAMS = Set.of("latitude", "longitude", "altitude", "speed", "amount_satellite", "course");
+
     public static final char START_SENSOR_ID_TOKEN = '{';
     public static final char END_SENSOR_ID_TOKEN = '}';
 

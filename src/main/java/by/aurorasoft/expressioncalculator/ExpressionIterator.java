@@ -38,7 +38,7 @@ public class ExpressionIterator {
         return ETokens.create(nextString());
     }
 
-    public String nextString() {
+    private String nextString() {
 
         StringBuilder r = new StringBuilder();
         //read digit
@@ -87,10 +87,16 @@ public class ExpressionIterator {
     }
 
     private String getIdByName(String name) {
-        StringBuilder builder = new StringBuilder("{");
+        StringBuilder builder = new StringBuilder("" + SupportedOperations.START_SENSOR_ID_TOKEN);
+        if(name.charAt(0) == SupportedOperations.PARAM_TOKEN){
+            if(!SupportedOperations.AVAILABLE_PARAMS.contains(name.substring(1))){
+                throw new IllegalArgumentException(String.format("param with name: %s is not available", name));
+            }
+            return builder.append(name).append(SupportedOperations.END_SENSOR_ID_TOKEN).toString();
+        }
         for (RawToken rawToken : rawTokens) {
             if (rawToken.getName().equalsIgnoreCase(name)) {
-                return builder.append(rawToken.getId()).append("}").toString();
+                return builder.append(rawToken.getId()).append(SupportedOperations.END_SENSOR_ID_TOKEN).toString();
             }
         }
         throw new IllegalArgumentException(String.format("token with name: %s not found", name));

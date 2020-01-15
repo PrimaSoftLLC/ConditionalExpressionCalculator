@@ -50,6 +50,13 @@ public class ReversePolishNotationTest {
     }
 
     @Test
+    public void testParam() {
+        List<RawToken> rawTokens = List.of();
+        List<EToken> actual = ReversePolishNotation.create("(6+{#speed})", rawTokens);
+        assertEquals(build(List.of("6", "{#speed}", "+")), actual);
+    }
+
+    @Test
     public void test6() {
 
         List<EToken> actual = ReversePolishNotation.create("(10>5)&(5+6<4)", List.of());

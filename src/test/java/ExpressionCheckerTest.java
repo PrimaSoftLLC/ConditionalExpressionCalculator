@@ -94,6 +94,11 @@ public class ExpressionCheckerTest {
         checker.checkLogic("(10}+10)");
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void check15() {
+        checker.checkLogic("{#unknown}+10)");
+    }
+
     @Test
     public void checkSpaces() {
         assertEquals("{s}+10", checker.checkMath("{s}   + 10"));

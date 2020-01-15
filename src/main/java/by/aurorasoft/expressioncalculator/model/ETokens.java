@@ -8,6 +8,7 @@ import java.util.Map;
 public class ETokens {
 
     private final static Map<String, EToken> cache = new HashMap<>();
+    private final static String START_PARAM_TOKEN = "" + SupportedOperations.START_SENSOR_ID_TOKEN + SupportedOperations.PARAM_TOKEN;
 
     static {
         cache.put("+", new EToken(EType.PLUS));
@@ -31,6 +32,9 @@ public class ETokens {
             EToken t = cache.get(s);
             if (t != null) {
                 return t;
+            }
+            if(s.startsWith(START_PARAM_TOKEN)){
+                return new EToken(EType.PARAM, s.substring(2, s.length() - 1));
             }
             if (s.charAt(0) == SupportedOperations.START_SENSOR_ID_TOKEN) {
                 return new EToken(EType.TOKEN, Long.parseLong(s.substring(1, s.length() - 1)));

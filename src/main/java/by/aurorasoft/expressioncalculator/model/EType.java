@@ -16,6 +16,7 @@ public enum EType {
     OR("|"), AND("&"),
     NUMB("numb"),
     TOKEN("token"),
+    PARAM("param"),
     OPEN_B("("), CLOSE_B(")");
 
     public final String detail;
