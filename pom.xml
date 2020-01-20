@@ -6,7 +6,7 @@
 
     <groupId>by.aurora-soft.conditional-expression-calculator</groupId>
     <artifactId>conditional-expression-calculator</artifactId>
-    <version>3.4</version>
+    <version>4.0</version>
 
     <properties>
         <java.version>11</java.version>
@@ -16,6 +16,26 @@
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.10</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

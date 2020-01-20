@@ -30,7 +30,7 @@ public class ExpressionCalculator {
         final float[] stack = new float[tokens.size()];
         int i = 0;
         for (EToken t : tokens) {
-            if (t.is(EType.TOKEN) || t.is(EType.NUMB)) {
+            if (t.is(EType.TOKEN) || t.is(EType.NUMB) || t.is(EType.PARAM)) {
                 stack[i++] = t.getValue();
             } else {
                 float b = stack[i-- - 1];
@@ -62,7 +62,7 @@ public class ExpressionCalculator {
         int i = 0;
         final float[] stack = new float[tokens.size()];
         for (EToken t : tokens) {
-            if (t.is(EType.TOKEN) || t.is(EType.NUMB)) {
+            if (t.is(EType.TOKEN) || t.is(EType.NUMB) || t.is(EType.PARAM)) {
                 stack[i++] = t.getValue();
                 continue;
             }

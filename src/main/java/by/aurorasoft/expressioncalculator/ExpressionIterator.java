@@ -2,9 +2,9 @@ package by.aurorasoft.expressioncalculator;
 
 import by.aurorasoft.expressioncalculator.model.EToken;
 import by.aurorasoft.expressioncalculator.model.ETokens;
-import by.aurorasoft.expressioncalculator.model.RawToken;
+import by.aurorasoft.expressioncalculator.model.sensor.SensorI;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * iterate by Math or Conditional or Logic expression
@@ -12,11 +12,11 @@ import java.util.List;
 public class ExpressionIterator {
 
     private final String raw;
-    private final List<RawToken> rawTokens;
+    private final Collection<SensorI> rawTokens;
     private final int length;
     private int index = 0;
 
-    public ExpressionIterator(String raw, List<RawToken> rawTokens) {
+    public ExpressionIterator(String raw, Collection<SensorI> rawTokens) {
         if (raw == null) {
             this.raw = "";
         } else {
@@ -94,7 +94,7 @@ public class ExpressionIterator {
             }
             return builder.append(name).append(SupportedOperations.END_SENSOR_ID_TOKEN).toString();
         }
-        for (RawToken rawToken : rawTokens) {
+        for (SensorI rawToken : rawTokens) {
             if (rawToken.getName().equalsIgnoreCase(name)) {
                 return builder.append(rawToken.getId()).append(SupportedOperations.END_SENSOR_ID_TOKEN).toString();
             }

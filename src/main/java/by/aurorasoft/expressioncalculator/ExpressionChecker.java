@@ -1,11 +1,10 @@
 package by.aurorasoft.expressioncalculator;
 
 import by.aurorasoft.expressioncalculator.model.*;
+import by.aurorasoft.expressioncalculator.model.sensor.SensorI;
+import by.aurorasoft.expressioncalculator.model.sensor.impl.SensorImpl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * check the expression
@@ -37,7 +36,7 @@ public class ExpressionChecker {
             return raw;
         }
         raw = removeRedundantSpaces(raw);
-        List<RawToken> dummyRawTokens = createDummyRawTokenList(raw);
+        List<SensorI> dummyRawTokens = createDummyRawTokenList(raw);
         checkCounts(raw, dummyRawTokens);
         List<EToken> tokens = ReversePolishNotation.create(raw, dummyRawTokens);
         for (EToken t : tokens) {
@@ -72,8 +71,8 @@ public class ExpressionChecker {
         return stringBuilder.toString();
     }
 
-    private List<RawToken> createDummyRawTokenList(String raw) {
-        List<RawToken> rawTokens = new ArrayList<>();
+    private List<SensorI> createDummyRawTokenList(String raw) {
+        List<SensorI> rawTokens = new ArrayList<>();
         Long dummyId = 1l;
         int index = 0;
         while (index < raw.length() - 1) {
@@ -90,7 +89,7 @@ public class ExpressionChecker {
                 if(raw.charAt(index++) != '}'){
                     throw new IllegalArgumentException(String.format("Wrong expression: %s not found closing '}'", r.toString()));
                 }
-                rawTokens.add(new RawTokenImpl(dummyId++, r.toString()));
+                rawTokens.add(new SensorImpl(dummyId++, r.toString(), 1l, null, null, null, null, Map.of()));
             } else {
                 index++;
             }
@@ -107,13 +106,13 @@ public class ExpressionChecker {
             return raw;
         }
         raw = removeRedundantSpaces(raw);
-        List<RawToken> dummyTokens = createDummyRawTokenList(raw);
+        List<SensorI> dummyTokens = createDummyRawTokenList(raw);
         checkCounts(raw, dummyTokens);
         conditionalCheck(raw, dummyTokens);
         return raw;
     }
 
-    private void checkCounts(String raw, List<RawToken> rawTokens) {
+    private void checkCounts(String raw, List<SensorI> rawTokens) {
         final ExpressionIterator iterator = new ExpressionIterator(raw, rawTokens);
         final Counter counter = new Counter();
         while (iterator.hasNext()) {
@@ -166,7 +165,7 @@ public class ExpressionChecker {
         }
     }
 
-    private void conditionalCheck(String raw, List<RawToken> rawTokens) {
+    private void conditionalCheck(String raw, List<SensorI> rawTokens) {
         List<EToken> tokens = ReversePolishNotation.create(raw, rawTokens);
         EToken prev = ETokens.create(")");
         for (EToken t : tokens) {

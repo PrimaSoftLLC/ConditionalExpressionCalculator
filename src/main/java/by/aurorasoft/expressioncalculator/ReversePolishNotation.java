@@ -2,7 +2,7 @@ package by.aurorasoft.expressioncalculator;
 
 import by.aurorasoft.expressioncalculator.model.EToken;
 import by.aurorasoft.expressioncalculator.model.EType;
-import by.aurorasoft.expressioncalculator.model.RawToken;
+import by.aurorasoft.expressioncalculator.model.sensor.SensorI;
 
 import java.util.*;
 
@@ -64,7 +64,7 @@ public class ReversePolishNotation {
      *                         Can contains dinamical data - token number in brackets {123}.
      * @return Stack of strings with reverse polish notation
      */
-    public static List<EToken> create(String stringExpression, List<RawToken> rawTokens) {
+    public static List<EToken> create(String stringExpression, Collection<SensorI> rawTokens) {
         final ExpressionIterator rawExpr = new ExpressionIterator(stringExpression, rawTokens);
         return create(rawExpr);
     }

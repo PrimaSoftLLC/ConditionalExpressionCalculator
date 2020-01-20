@@ -1,10 +1,12 @@
 import by.aurorasoft.expressioncalculator.ReversePolishNotation;
 import by.aurorasoft.expressioncalculator.model.EToken;
-import by.aurorasoft.expressioncalculator.model.RawToken;
-import by.aurorasoft.expressioncalculator.model.RawTokenImpl;
+
+import by.aurorasoft.expressioncalculator.model.sensor.SensorI;
+import by.aurorasoft.expressioncalculator.model.sensor.impl.SensorImpl;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static testutils.Builder.build;
@@ -25,7 +27,7 @@ public class ReversePolishNotationTest {
 
     @Test
     public void test01() {
-        List<RawToken> rawTokens = List.of(new RawTokenImpl(123l, "speed-sensor"));
+        List<SensorI> rawTokens = List.of(new SensorImpl(123l, "speed-sensor", 123l, null, null, null, null, Map.of()));
         List<EToken> actual = ReversePolishNotation.create("{x}*2+3", rawTokens);
         assertEquals(List.of(build("{0}"), build("2"), build("*"), build("3"), build("+")), actual);
     }
@@ -44,14 +46,14 @@ public class ReversePolishNotationTest {
 
     @Test
     public void test4() {
-        List<RawToken> rawTokens = List.of(new RawTokenImpl(123l, "rpm sensor"));
+        List<SensorI> rawTokens = List.of(new SensorImpl(123l, "rpm sensor", 123l, null, null, null, null, Map.of()));
         List<EToken> actual = ReversePolishNotation.create("(6+{rpm sensor})", rawTokens);
         assertEquals(build(List.of("6", "{123}", "+")), actual);
     }
 
     @Test
     public void testParam() {
-        List<RawToken> rawTokens = List.of();
+        List<SensorI> rawTokens = List.of();
         List<EToken> actual = ReversePolishNotation.create("(6+{#speed})", rawTokens);
         assertEquals(build(List.of("6", "{#speed}", "+")), actual);
     }
