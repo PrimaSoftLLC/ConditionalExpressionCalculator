@@ -1,26 +1,34 @@
 package by.aurorasoft.expressioncalculator.model.sensor.impl;
 
-import by.aurorasoft.expressioncalculator.model.sensor.CalibrationI;
-import by.aurorasoft.expressioncalculator.model.sensor.ProcessedDataI;
-import by.aurorasoft.expressioncalculator.model.sensor.RawDataI;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
+@Data
 @Getter
-public class CalibrationImpl implements CalibrationI {
-    private final TreeSet<ProcessedDataI> processedDataList;
-    private final TreeSet<RawDataI> rawDataList;
+public class Calibration {
+    private final TreeSet<ProcessedData> processedDataList;
+    private final TreeSet<RawData> rawDataList;
 
-    public CalibrationImpl() {
+    public Calibration() {
         processedDataList = new TreeSet<>();
         rawDataList = new TreeSet<>();
     }
 
-    public CalibrationImpl(List<RawDataI> rawData) {
+    public Calibration(@JsonProperty("rawDataList") List<RawData> rawData) {
+        this(rawData, List.of());
+    }
+
+    @JsonCreator
+    public Calibration(@JsonProperty("rawDataList") List<RawData> rawData, @JsonProperty("processedDataList") List<ProcessedData> processedDataList) {
         if (rawData == null) {
             this.rawDataList = new TreeSet<>();
             this.processedDataList = new TreeSet<>();
@@ -34,35 +42,35 @@ public class CalibrationImpl implements CalibrationI {
         if (processedDataList.size() == 0) {
             return value;
         }
-        return processedDataList.floor(new ProcessedDataImpl(value, value)).calc(value);
+        return processedDataList.floor(new ProcessedData(value, value)).calc(value);
     }
 
-    private TreeSet<ProcessedDataI> calculateProcessedData() {
+    private TreeSet<ProcessedData> calculateProcessedData() {
 
-        TreeSet<ProcessedDataI> result = new TreeSet<>();
+        TreeSet<ProcessedData> result = new TreeSet<>();
         if (rawDataList == null) {
             return result;
         }
         if (rawDataList.size() < 2) {
             return result;
         }
-        Iterator<RawDataI> iterator = rawDataList.iterator();
-        RawDataI prev = iterator.next();
+        Iterator<RawData> iterator = rawDataList.iterator();
+        RawData prev = iterator.next();
         while (iterator.hasNext()) {
-            RawDataI cur = iterator.next();
+            RawData cur = iterator.next();
             result.add(calculateProccesedData(prev, cur));
             prev = cur;
         }
-        ProcessedDataI first = result.first();
-        result.add(new ProcessedDataImpl(Float.MAX_VALUE * -1, first.getMin(), first.getOffset(),
+        ProcessedData first = result.first();
+        result.add(new ProcessedData(Float.MAX_VALUE * -1, first.getMin(), first.getOffset(),
                 first.getFactor(), first.getText()));
-        ProcessedDataI last = result.last();
-        result.add(new ProcessedDataImpl(last.getMax(), Float.MAX_VALUE, last.getOffset(),
+        ProcessedData last = result.last();
+        result.add(new ProcessedData(last.getMax(), Float.MAX_VALUE, last.getOffset(),
                 last.getFactor(), last.getText()));
         return result;
     }
 
-    private ProcessedDataI calculateProccesedData(RawDataI current, RawDataI next) {
+    private ProcessedData calculateProccesedData(RawData current, RawData next) {
         final float x1 = current.getInValue();
         final float x2 = next.getInValue();
 
@@ -71,10 +79,10 @@ public class CalibrationImpl implements CalibrationI {
 
         final MetaValues metaValues = createMetaValues(y1, y2, x1, x2, current);
 
-        return new ProcessedDataImpl(x1, x2, metaValues.offset, metaValues.factor, metaValues.text);
+        return new ProcessedData(x1, x2, metaValues.offset, metaValues.factor, metaValues.text);
     }
 
-    private MetaValues createMetaValues(float y1, float y2, float x1, float x2, RawDataI valueDTO) {
+    private MetaValues createMetaValues(float y1, float y2, float x1, float x2, RawData valueDTO) {
         return new MetaValues(calculateFactor(y1, y2, x1, x2),
                 calculateOffset(y1, y2, x1, x2), valueDTO.getText());
     }

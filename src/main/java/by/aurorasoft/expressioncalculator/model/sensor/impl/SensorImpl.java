@@ -1,10 +1,8 @@
 package by.aurorasoft.expressioncalculator.model.sensor.impl;
 
 import by.aurorasoft.expressioncalculator.model.EToken;
-import by.aurorasoft.expressioncalculator.model.sensor.CalibrationI;
 import by.aurorasoft.expressioncalculator.model.sensor.ParameterI;
 import by.aurorasoft.expressioncalculator.model.sensor.SensorI;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,14 +16,14 @@ public class SensorImpl implements SensorI {
     private final String name;
     private final Long unitId;
     private final ParameterI parameter;
-    private final CalibrationI calibration;
+    private final Calibration calibration;
     private final String formulaRaw;
     private final String conditionRaw;
     private List<EToken> formula;
     private List<EToken> condition;
     private final Map<String, String> options;
 
-    public SensorImpl(Long id, String name, Long unitId, ParameterI parameter, CalibrationI calibration, String formulaRaw, String conditionRaw, Map<String, String> options) {
+    public SensorImpl(Long id, String name, Long unitId, ParameterI parameter, Calibration calibration, String formulaRaw, String conditionRaw, Map<String, String> options) {
         this.id = id;
         this.name = name;
         this.unitId = unitId;

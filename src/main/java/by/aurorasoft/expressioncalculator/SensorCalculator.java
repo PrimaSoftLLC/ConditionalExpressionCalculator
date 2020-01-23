@@ -18,7 +18,7 @@ public class SensorCalculator {
     /**
      * calculate value and apply condition
      */
-    public static float calculateValue(SensorI sensor, MessageI m, Map<Long, SensorI> sensorMap) {
+    public static float calculateValue(SensorI sensor, MessageI m, Map<Long, ? extends SensorI> sensorMap) {
         float v = calculateWithoutCondition(sensor, m, sensorMap);
         if (!applyCondition(sensor, m, v, sensorMap)) {
             v = Float.NaN;
@@ -29,7 +29,7 @@ public class SensorCalculator {
     /**
      * calculate value without applying condition
      */
-    public static float calculateWithoutCondition(SensorI sensor, MessageI m, Map<Long, SensorI> sensorMap) {
+    public static float calculateWithoutCondition(SensorI sensor, MessageI m, Map<Long, ? extends SensorI> sensorMap) {
         buildFormula(sensor, sensorMap);
         float v = getValueByName(sensor, m.getParams());
         if (sensor.getFormulaRaw() != null && sensor.getFormula().size() > 0) {
@@ -44,7 +44,7 @@ public class SensorCalculator {
     /**
      * apply condition from this object {@prop condition}
      */
-    public static boolean applyCondition(SensorI sensor, MessageI m, float v, Map<Long, SensorI> sensorMap) {
+    public static boolean applyCondition(SensorI sensor, MessageI m, float v, Map<Long, ? extends SensorI> sensorMap) {
         buildCondition(sensor, sensorMap);
         if (sensor.getConditionRaw() != null && sensor.getCondition().size() > 0) {
             replaceTokens(sensorMap, sensor.getCondition(), v, m);
@@ -56,12 +56,12 @@ public class SensorCalculator {
     /**
      * apply external condition {@prop condition} for this sensor
      */
-    public static boolean applyCondition(SensorI sensor, List<EToken> c, MessageI m, Map<Long, SensorI> mapSensors) {
+    public static boolean applyCondition(SensorI sensor, List<EToken> c, MessageI m, Map<Long, ? extends SensorI> sensorMap) {
         if (c == null || c.size() == 0) {
             return true;
         }
-        float value = calculateValue(sensor, m, mapSensors);
-        replaceTokens(mapSensors, c, value, m);
+        float value = calculateValue(sensor, m, sensorMap);
+        replaceTokens(sensorMap, c, value, m);
         return ExpressionCalculator.calculateConditional(c);
     }
 
@@ -94,7 +94,7 @@ public class SensorCalculator {
     /**
      * prepare {@param tokens} to calculate into {@link ExpressionCalculator}
      */
-    private static void replaceTokens(Map<Long, SensorI> sensorsMap, List<EToken> tokens, float value, MessageI m) {
+    private static void replaceTokens(Map<Long, ? extends SensorI> sensorMap, List<EToken> tokens, float value, MessageI m) {
         for (EToken t : tokens) {
             if(t.is(EType.PARAM)){
                 t.setValue(m.getFieldValue(t.getParamName()));
@@ -103,14 +103,14 @@ public class SensorCalculator {
                 if (t.getTokenId() == 0) {
                     t.setValue(value);
                 } else {
-                    SensorI s = sensorsMap.get(t.getTokenId());
-                    t.setValue(SensorCalculator.calculateValue(s, m, sensorsMap));
+                    SensorI s = sensorMap.get(t.getTokenId());
+                    t.setValue(SensorCalculator.calculateValue(s, m, sensorMap));
                 }
             }
         }
     }
 
-    public static List<EToken> buildCondition(SensorI sensor, Map<Long, SensorI> sensorMap) {
+    public static List<EToken> buildCondition(SensorI sensor, Map<Long, ? extends SensorI> sensorMap) {
         try {
             if (sensor.getConditionRaw() != null && sensor.getCondition() == null) {
                 sensor.setCondition(ReversePolishNotation.create(sensor.getConditionRaw(), sensorMap.values()));
@@ -122,7 +122,7 @@ public class SensorCalculator {
         return sensor.getCondition();
     }
 
-    public static List<EToken> buildFormula(SensorI sensor, Map<Long, SensorI> sensorMap) {
+    public static List<EToken> buildFormula(SensorI sensor, Map<Long, ? extends SensorI> sensorMap) {
         try {
             if (sensor.getFormulaRaw() != null && sensor.getFormula() == null) {
                 sensor.setFormula(ReversePolishNotation.create(sensor.getFormulaRaw(), sensorMap.values()));

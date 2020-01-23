@@ -12,11 +12,11 @@ import java.util.Collection;
 public class ExpressionIterator {
 
     private final String raw;
-    private final Collection<SensorI> rawTokens;
+    private final Collection<? extends SensorI> rawTokens;
     private final int length;
     private int index = 0;
 
-    public ExpressionIterator(String raw, Collection<SensorI> rawTokens) {
+    public ExpressionIterator(String raw, Collection<? extends SensorI> rawTokens) {
         if (raw == null) {
             this.raw = "";
         } else {

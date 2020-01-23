@@ -1,17 +1,19 @@
 package by.aurorasoft.expressioncalculator.model.sensor.impl;
 
-import by.aurorasoft.expressioncalculator.model.sensor.ProcessedDataI;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class ProcessedDataImpl implements ProcessedDataI {
+public class ProcessedData implements Comparable<ProcessedData> {
     private final float min;
     private final float max;
     private final float offset;
     private final float factor;
     private final String text;
 
-    public ProcessedDataImpl(float min, float max) {
+    public ProcessedData(float min, float max) {
         this.min = min;
         this.max = max;
         this.offset = 0;
@@ -19,7 +21,10 @@ public class ProcessedDataImpl implements ProcessedDataI {
         this.text = "";
     }
 
-    public ProcessedDataImpl(float min, float max, float offset, float factor, String text) {
+    @JsonCreator
+    public ProcessedData(@JsonProperty("min") float min, @JsonProperty("max") float max,
+                         @JsonProperty("offset") float offset, @JsonProperty("factor") float factor,
+                         @JsonProperty("text") String text) {
         this.min = min;
         this.max = max;
         this.offset = offset;
@@ -32,7 +37,7 @@ public class ProcessedDataImpl implements ProcessedDataI {
     }
 
     @Override
-    public int compareTo(ProcessedDataI o) {
+    public int compareTo(ProcessedData o) {
         if (o.getMin() < this.min) {
             return 1;
         }

@@ -1,6 +1,7 @@
 package by.aurorasoft.expressioncalculator.model.sensor;
 
 import by.aurorasoft.expressioncalculator.model.EToken;
+import by.aurorasoft.expressioncalculator.model.sensor.impl.Calibration;
 
 import java.util.List;
 import java.util.Map;
@@ -13,7 +14,7 @@ public interface SensorI {
 
     ParameterI getParameter();
 
-    CalibrationI getCalibration();
+    Calibration getCalibration();
 
     String getFormulaRaw();
 
