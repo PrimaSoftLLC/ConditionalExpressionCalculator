@@ -1,6 +1,8 @@
 package by.aurorasoft.expressioncalculator;
 
-import by.aurorasoft.expressioncalculator.model.*;
+import by.aurorasoft.expressioncalculator.model.EToken;
+import by.aurorasoft.expressioncalculator.model.ETokens;
+import by.aurorasoft.expressioncalculator.model.EType;
 import by.aurorasoft.expressioncalculator.model.sensor.SensorI;
 import by.aurorasoft.expressioncalculator.model.sensor.impl.SensorImpl;
 
@@ -28,14 +30,17 @@ public class ExpressionChecker {
     }
 
     /**
-     * @returns return corrected expression
      * @throws IllegalArgumentException if {@param raw} is not valid matematical expression
+     * @returns return corrected expression
      */
     public String checkMath(String raw) {
         if (raw == null) {
             return raw;
         }
         raw = removeRedundantSpaces(raw);
+        if (raw.length() == 0) {
+            return null;
+        }
         List<SensorI> dummyRawTokens = createDummyRawTokenList(raw);
         checkCounts(raw, dummyRawTokens);
         List<EToken> tokens = ReversePolishNotation.create(raw, dummyRawTokens);
@@ -54,17 +59,17 @@ public class ExpressionChecker {
     private String removeRedundantSpaces(String raw) {
         StringBuilder stringBuilder = new StringBuilder(raw.trim());
         boolean isSensorToken = false;
-        for (int i = 0; i <stringBuilder.length(); i++) {
+        for (int i = 0; i < stringBuilder.length(); i++) {
             char ch = stringBuilder.charAt(i);
-            if(ch == SupportedOperations.START_SENSOR_ID_TOKEN){
+            if (ch == SupportedOperations.START_SENSOR_ID_TOKEN) {
                 isSensorToken = true;
                 continue;
             }
-            if(ch == SupportedOperations.END_SENSOR_ID_TOKEN){
+            if (ch == SupportedOperations.END_SENSOR_ID_TOKEN) {
                 isSensorToken = false;
                 continue;
             }
-            if(!isSensorToken && ch == ' '){
+            if (!isSensorToken && ch == ' ') {
                 stringBuilder.deleteCharAt(i--);
             }
         }
@@ -83,10 +88,10 @@ public class ExpressionChecker {
                     r.append(raw.charAt(index++));
                 }
                 // skip '}'
-                if(index > raw.length() - 1){
+                if (index > raw.length() - 1) {
                     index--;
                 }
-                if(raw.charAt(index++) != '}'){
+                if (raw.charAt(index++) != '}') {
                     throw new IllegalArgumentException(String.format("Wrong expression: %s not found closing '}'", r.toString()));
                 }
                 rawTokens.add(new SensorImpl(dummyId++, r.toString(), 1l, null, null, null, null, Map.of()));
@@ -98,14 +103,17 @@ public class ExpressionChecker {
     }
 
     /**
-     * @returns return corrected expression
      * @throws IllegalArgumentException if {@param raw} is not valid logic expression
+     * @returns return corrected expression
      */
     public String checkLogic(String raw) {
         if (raw == null) {
             return raw;
         }
         raw = removeRedundantSpaces(raw);
+        if (raw.length() == 0) {
+            return null;
+        }
         List<SensorI> dummyTokens = createDummyRawTokenList(raw);
         checkCounts(raw, dummyTokens);
         conditionalCheck(raw, dummyTokens);
