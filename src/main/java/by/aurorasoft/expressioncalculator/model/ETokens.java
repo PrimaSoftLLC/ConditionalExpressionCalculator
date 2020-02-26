@@ -8,23 +8,23 @@ import java.util.Map;
 public class ETokens {
 
     private final static Map<String, EToken> cache = new HashMap<>();
-    private final static String START_PARAM_TOKEN = "" + SupportedOperations.START_SENSOR_ID_TOKEN + SupportedOperations.PARAM_TOKEN;
+    private final static String START_PARAM_TOKEN = "" + SupportedOperations.START_SENSOR_ID_TOKEN + SupportedOperations.MESSAGE_PARAM_TOKEN;
 
     static {
-        cache.put("+", new EToken(EType.PLUS));
-        cache.put("-", new EToken(EType.MINUS));
-        cache.put("/", new EToken(EType.DIV));
-        cache.put("*", new EToken(EType.MULT));
-        cache.put(">", new EToken(EType.MORE));
-        cache.put(">=", new EToken(EType.MORE_E));
-        cache.put("<", new EToken(EType.LESS));
-        cache.put("<=", new EToken(EType.LESS_E));
-        cache.put("=", new EToken(EType.EQUAL));
-        cache.put("!=", new EToken(EType.NOT_E));
-        cache.put("(", new EToken(EType.OPEN_B));
-        cache.put(")", new EToken(EType.CLOSE_B));
-        cache.put("&", new EToken(EType.AND));
-        cache.put("|", new EToken(EType.OR));
+        cache.put("+", EToken.operation(EType.PLUS));
+        cache.put("-", EToken.operation(EType.MINUS));
+        cache.put("/", EToken.operation(EType.DIV));
+        cache.put("*", EToken.operation(EType.MULT));
+        cache.put(">", EToken.operation(EType.MORE));
+        cache.put(">=", EToken.operation(EType.MORE_E));
+        cache.put("<", EToken.operation(EType.LESS));
+        cache.put("<=", EToken.operation(EType.LESS_E));
+        cache.put("=", EToken.operation(EType.EQUAL));
+        cache.put("!=", EToken.operation(EType.NOT_E));
+        cache.put("(", EToken.operation(EType.OPEN_B));
+        cache.put(")", EToken.operation(EType.CLOSE_B));
+        cache.put("&", EToken.operation(EType.AND));
+        cache.put("|", EToken.operation(EType.OR));
     }
 
     public static EToken create(String s) {
@@ -34,12 +34,12 @@ public class ETokens {
                 return t;
             }
             if(s.startsWith(START_PARAM_TOKEN)){
-                return new EToken(EType.PARAM, s.substring(2, s.length() - 1));
+                return EToken.messageParamName(s.substring(2, s.length() - 1));
             }
             if (s.charAt(0) == SupportedOperations.START_SENSOR_ID_TOKEN) {
-                return new EToken(EType.TOKEN, Long.parseLong(s.substring(1, s.length() - 1)));
+                return EToken.sensorId(Long.parseLong(s.substring(1, s.length() - 1)));
             }
-            return new EToken(EType.NUMB, Float.parseFloat(s));
+            return EToken.number(Double.parseDouble(s));
         } catch (Exception e) {
             throw new IllegalArgumentException(String.format("Token: '%s' can't be converted", s));
         }

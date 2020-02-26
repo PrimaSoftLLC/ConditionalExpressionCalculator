@@ -8,7 +8,7 @@ import java.util.Set;
 
 public abstract class SupportedOperations {
 
-    public static final char PARAM_TOKEN = '#';
+    public static final char MESSAGE_PARAM_TOKEN = '#';
 
     public static final Set<String> AVAILABLE_PARAMS = Set.of("latitude", "longitude", "altitude", "speed", "amountSatellite", "course");
 
@@ -61,7 +61,7 @@ public abstract class SupportedOperations {
         return MATH.contains(operation);
     }
 
-    public static float calculate(float a, float b, EType operand){
+    public static double calculate(double a, double b, EType operand){
         switch (operand){
             case PLUS: return a + b;
             case MINUS: return a - b;
@@ -71,7 +71,7 @@ public abstract class SupportedOperations {
         }
     }
 
-    public static boolean doCondition(float a, float b, EType operand){
+    public static boolean doCondition(double a, double b, EType operand){
         switch (operand){
             case MORE: return a > b;
             case MORE_E: return a >= b;

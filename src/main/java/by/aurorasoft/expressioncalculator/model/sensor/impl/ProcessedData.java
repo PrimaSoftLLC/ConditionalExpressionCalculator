@@ -7,13 +7,13 @@ import lombok.Data;
 
 @Data
 public class ProcessedData implements Comparable<ProcessedData> {
-    private final float min;
-    private final float max;
-    private final float offset;
-    private final float factor;
+    private final double min;
+    private final double max;
+    private final double offset;
+    private final double factor;
     private final String text;
 
-    public ProcessedData(float min, float max) {
+    public ProcessedData(double min, double max) {
         this.min = min;
         this.max = max;
         this.offset = 0;
@@ -22,8 +22,8 @@ public class ProcessedData implements Comparable<ProcessedData> {
     }
 
     @JsonCreator
-    public ProcessedData(@JsonProperty("min") float min, @JsonProperty("max") float max,
-                         @JsonProperty("offset") float offset, @JsonProperty("factor") float factor,
+    public ProcessedData(@JsonProperty("min") double min, @JsonProperty("max") double max,
+                         @JsonProperty("offset") double offset, @JsonProperty("factor") double factor,
                          @JsonProperty("text") String text) {
         this.min = min;
         this.max = max;
@@ -32,7 +32,7 @@ public class ProcessedData implements Comparable<ProcessedData> {
         this.text = text;
     }
 
-    public float calc(float value) {
+    public double calc(double value) {
         return value * factor + offset;
     }
 

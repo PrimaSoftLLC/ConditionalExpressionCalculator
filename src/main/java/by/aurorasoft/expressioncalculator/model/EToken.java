@@ -21,46 +21,37 @@ public class EToken {
      * contains value. This value set before calculations in
      * @see by.aurorasoft.expressioncalculator.ExpressionCalculator}
      */
-    private float value = -1;
+    private double value;
 
     /**
      *  create token with operation +, -, *, > ...
      */
-    public EToken(EType type) {
-        this.type = type;
-        this.tokenId = -1;
-        this.paramName = null;
+    public static EToken operation(EType t){
+        return new EToken(t, null, -1, -1);
     }
 
     /**
      *  create token with message param
      */
-    public EToken(EType type, String paramName) {
-        this.type = type;
-        this.tokenId = -1;
-        this.paramName = paramName;
-    }
-
-    /**
-     *  create token with sensor param
-     */
-    public EToken(EType type, long tokenId) {
-        this.type = type;
-        this.tokenId = tokenId;
-        this.paramName = null;
+    public static EToken messageParamName(String paramName){
+        return new EToken(EType.PARAM, paramName, -1, -1);
     }
 
     /**
      *  create token with number
      */
-    public EToken(EType type, float value) {
-        this.type = type;
-        this.value = value;
-        this.paramName = null;
-        this.tokenId = -1;
+    public static EToken number(double v){
+        return new EToken(EType.NUMB, null, -1, v);
     }
 
-    public EToken(EType type, String param, long tokenId, float value) {
+    /**
+     *  create token with sensor param
+     */
+    public static EToken sensorId(long id){
+        return new EToken(EType.TOKEN, null, id, -1);
+    }
+
+    private EToken(EType type, String param, long tokenId, double value) {
         this.type = type;
         this.tokenId = tokenId;
         this.value = value;
@@ -83,11 +74,11 @@ public class EToken {
         return paramName;
     }
 
-    public float getValue() {
+    public double getValue() {
         return value;
     }
 
-    public void setValue(float value) {
+    public void setValue(double value) {
         this.value = value;
     }
 
@@ -107,7 +98,7 @@ public class EToken {
         if (!(o instanceof EToken)) return false;
         EToken eToken = (EToken) o;
         return getTokenId() == eToken.getTokenId() &&
-                Float.compare(eToken.getValue(), getValue()) == 0 &&
+                Double.compare(eToken.getValue(), getValue()) == 0 &&
                 getType() == eToken.getType() &&
                 Objects.equals(getParamName(), eToken.getParamName());
     }

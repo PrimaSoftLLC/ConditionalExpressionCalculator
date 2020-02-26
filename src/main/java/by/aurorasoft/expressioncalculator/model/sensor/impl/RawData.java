@@ -3,33 +3,28 @@ package by.aurorasoft.expressioncalculator.model.sensor.impl;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class RawData implements Comparable<RawData> {
 
-    private final float inValue;
-    private final float actualValue;
+    private final double inValue;
+    private final double actualValue;
     private final String text;
 
     @JsonCreator
-    public RawData(@JsonProperty("inValue") float inValue, @JsonProperty("actualValue") float actualValue,
+    public RawData(@JsonProperty("inValue") double inValue, @JsonProperty("actualValue") double actualValue,
                    @JsonProperty("text") String text) {
         this.inValue = inValue;
         this.actualValue = actualValue;
         this.text = text;
     }
 
-    public float getInValue() {
+    public double getInValue() {
         return inValue;
     }
 
-    public float getActualValue() {
+    public double getActualValue() {
         return actualValue;
     }
 

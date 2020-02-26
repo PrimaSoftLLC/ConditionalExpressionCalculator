@@ -18,10 +18,10 @@ public class SensorCalculator {
     /**
      * calculate value and apply condition
      */
-    public static float calculateValue(SensorI sensor, MessageI m, Map<Long, ? extends SensorI> sensorMap) {
-        float v = calculateWithoutCondition(sensor, m, sensorMap);
+    public static double calculateValue(SensorI sensor, MessageI m, Map<Long, ? extends SensorI> sensorMap) {
+        double v = calculateWithoutCondition(sensor, m, sensorMap);
         if (!applyCondition(sensor, m, v, sensorMap)) {
-            v = Float.NaN;
+            v = Double.NaN;
         }
         return v;
     }
@@ -29,9 +29,9 @@ public class SensorCalculator {
     /**
      * calculate value without applying condition
      */
-    public static float calculateWithoutCondition(SensorI sensor, MessageI m, Map<Long, ? extends SensorI> sensorMap) {
+    public static double calculateWithoutCondition(SensorI sensor, MessageI m, Map<Long, ? extends SensorI> sensorMap) {
         buildFormula(sensor, sensorMap);
-        float v = getValueByName(sensor, m.getParams());
+        double v = getValueByName(sensor, m.getParams());
         if (sensor.getFormulaRaw() != null && sensor.getFormula().size() > 0) {
             replaceTokens(sensorMap, sensor.getFormula(), v, m);
             v = convertCalibration(sensor, ExpressionCalculator.calculateMath(sensor.getFormula()));
@@ -44,7 +44,7 @@ public class SensorCalculator {
     /**
      * apply condition from this object {@prop condition}
      */
-    public static boolean applyCondition(SensorI sensor, MessageI m, float v, Map<Long, ? extends SensorI> sensorMap) {
+    public static boolean applyCondition(SensorI sensor, MessageI m, double v, Map<Long, ? extends SensorI> sensorMap) {
         buildCondition(sensor, sensorMap);
         if (sensor.getConditionRaw() != null && sensor.getCondition().size() > 0) {
             replaceTokens(sensorMap, sensor.getCondition(), v, m);
@@ -60,12 +60,12 @@ public class SensorCalculator {
         if (c == null || c.size() == 0) {
             return true;
         }
-        float value = calculateValue(sensor, m, sensorMap);
+        double value = calculateValue(sensor, m, sensorMap);
         replaceTokens(sensorMap, c, value, m);
         return ExpressionCalculator.calculateConditional(c);
     }
 
-    private static float getValueByName(SensorI sensor, String raw) {
+    private static double getValueByName(SensorI sensor, String raw) {
         try {
             if (sensor.getParameter() == null) {
                 return 0;
@@ -78,23 +78,23 @@ public class SensorCalculator {
             start = start + name.length() + 2;
             int end = raw.indexOf(',', start);
             if (end == -1) {
-                return Float.valueOf(raw.substring(start));
+                return Double.parseDouble(raw.substring(start));
             } else {
-                return Float.valueOf(raw.substring(start, end));
+                return Double.parseDouble(raw.substring(start, end));
             }
         } catch (Exception e) {
             return -999;
         }
     }
 
-    private static float convertCalibration(SensorI sensor, float value) {
+    private static double convertCalibration(SensorI sensor, double value) {
         return sensor.getCalibration().calculateCalibrationValue(value);
     }
 
     /**
      * prepare {@param tokens} to calculate into {@link ExpressionCalculator}
      */
-    private static void replaceTokens(Map<Long, ? extends SensorI> sensorMap, List<EToken> tokens, float value, MessageI m) {
+    private static void replaceTokens(Map<Long, ? extends SensorI> sensorMap, List<EToken> tokens, double value, MessageI m) {
         for (EToken t : tokens) {
             if(t.is(EType.PARAM)){
                 t.setValue(m.getFieldValue(t.getParamName()));

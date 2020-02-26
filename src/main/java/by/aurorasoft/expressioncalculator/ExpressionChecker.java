@@ -78,7 +78,7 @@ public class ExpressionChecker {
 
     private List<SensorI> createDummyRawTokenList(String raw) {
         List<SensorI> rawTokens = new ArrayList<>();
-        Long dummyId = 1l;
+        long dummyId = 1;
         int index = 0;
         while (index < raw.length() - 1) {
             StringBuilder r = new StringBuilder();

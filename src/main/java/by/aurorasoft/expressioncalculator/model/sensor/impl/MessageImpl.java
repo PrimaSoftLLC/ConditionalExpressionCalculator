@@ -22,10 +22,10 @@ public class MessageImpl implements MessageI {
     private final String params;
 
     @Override
-    public float getFieldValue(String fieldName) {
+    public double getFieldValue(String fieldName) {
         try {
             Field field = this.getClass().getDeclaredField(fieldName);
-            return Float.parseFloat(field.get(this).toString());
+            return Double.parseDouble(field.get(this).toString());
         } catch (Exception e) {
             return -999999;
         }

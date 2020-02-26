@@ -24,7 +24,7 @@ public class ExpressionIterator {
         }
         this.length = this.raw.length();
         if (rawTokens == null) {
-            throw new IllegalArgumentException(String.format("RawToken list can't be null"));
+            throw new IllegalArgumentException("RawToken list can't be null");
         }
         this.rawTokens = rawTokens;
     }
@@ -88,7 +88,7 @@ public class ExpressionIterator {
 
     private String getIdByName(String name) {
         StringBuilder builder = new StringBuilder("" + SupportedOperations.START_SENSOR_ID_TOKEN);
-        if(name.charAt(0) == SupportedOperations.PARAM_TOKEN){
+        if(name.charAt(0) == SupportedOperations.MESSAGE_PARAM_TOKEN){
             if(!SupportedOperations.AVAILABLE_PARAMS.contains(name.substring(1))){
                 throw new IllegalArgumentException(String.format("param with name: %s is not available", name));
             }

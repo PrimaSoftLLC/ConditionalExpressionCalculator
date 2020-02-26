@@ -136,7 +136,7 @@ public class SensorCalculatorTest {
         MessageI m2 = buildMessage(2l, "2020-01-20T10:00:00Z", "param1:1:100,param2:1:200,param3:1:300");
         Map<Long, SensorI> sensorMap = Map.of(givenSensor.getId(), givenSensor);
 
-        assertEquals(Float.NaN, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
+        assertEquals(Double.NaN, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
     }
 
     private SensorImpl buildSensor(Long id, String name, String parameter, Calibration calibration, String formulaRaw, String conditionRaw, Map<String, String> options) {

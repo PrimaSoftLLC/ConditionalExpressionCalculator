@@ -38,7 +38,7 @@ public class Calibration {
         }
     }
 
-    public float calculateCalibrationValue(float value) {
+    public double calculateCalibrationValue(double value) {
         if (processedDataList.size() == 0) {
             return value;
         }
@@ -62,43 +62,43 @@ public class Calibration {
             prev = cur;
         }
         ProcessedData first = result.first();
-        result.add(new ProcessedData(Float.MAX_VALUE * -1, first.getMin(), first.getOffset(),
+        result.add(new ProcessedData(Double.MAX_VALUE * -1, first.getMin(), first.getOffset(),
                 first.getFactor(), first.getText()));
         ProcessedData last = result.last();
-        result.add(new ProcessedData(last.getMax(), Float.MAX_VALUE, last.getOffset(),
+        result.add(new ProcessedData(last.getMax(), Double.MAX_VALUE, last.getOffset(),
                 last.getFactor(), last.getText()));
         return result;
     }
 
     private ProcessedData calculateProccesedData(RawData current, RawData next) {
-        final float x1 = current.getInValue();
-        final float x2 = next.getInValue();
+        final double x1 = current.getInValue();
+        final double x2 = next.getInValue();
 
-        final float y1 = current.getActualValue();
-        final float y2 = next.getActualValue();
+        final double y1 = current.getActualValue();
+        final double y2 = next.getActualValue();
 
         final MetaValues metaValues = createMetaValues(y1, y2, x1, x2, current);
 
         return new ProcessedData(x1, x2, metaValues.offset, metaValues.factor, metaValues.text);
     }
 
-    private MetaValues createMetaValues(float y1, float y2, float x1, float x2, RawData valueDTO) {
+    private MetaValues createMetaValues(double y1, double y2, double x1, double x2, RawData valueDTO) {
         return new MetaValues(calculateFactor(y1, y2, x1, x2),
                 calculateOffset(y1, y2, x1, x2), valueDTO.getText());
     }
 
-    private float calculateFactor(float y1, float y2, float x1, float x2) {
+    private double calculateFactor(double y1, double y2, double x1, double x2) {
         return (y1 - y2) / (x1 - x2);
     }
 
-    private float calculateOffset(float y1, float y2, float x1, float x2) {
+    private double calculateOffset(double y1, double y2, double x1, double x2) {
         return y2 - (x2 * (y1 - y2) / (x1 - x2));
     }
 
     @AllArgsConstructor
     private static class MetaValues {
-        private float factor;
-        private float offset;
+        private double factor;
+        private double offset;
         private String text;
     }
 }

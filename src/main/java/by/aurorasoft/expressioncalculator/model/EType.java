@@ -5,8 +5,8 @@ package by.aurorasoft.expressioncalculator.model;
  * MATH - matematical operations (+, -, *, /)
  * COND - conditional operations (>, >=, <, <=, =, !=)
  * LOGIC - logical operations (&, |)
- * NUMB - number int or float
- * TOKEN - value in the braces {} ({101}, {1} ...)
+ * NUMB - number int or double
+ * TOKEN - value in the braces {} ({sensor one}, {rpm sensor} ...)
  * OPEN_B - open bracket "("
  * CLOSE_B - close bracket ")"
  */

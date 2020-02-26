@@ -11,45 +11,25 @@ import java.util.List;
  */
 public class ExpressionCalculator {
 
-//    /**
-//     * Calculate math {@param expression}. Every {@param expression} convert
-//     * to Reverse Polish Notation {@link ReversePolishNotation}
-//     *
-//     * @return number as a result
-//     */
-//    public static float calculateMath(String expression) {
-//        return calculateMath(ReversePolishNotation.create(expression));
-//    }
-
     /**
      * Calculate math {@param expression} the Reverse Polish Notation {@link ReversePolishNotation}
      *
      * @return number as a result
      */
-    public static float calculateMath(List<EToken> tokens) {
-        final float[] stack = new float[tokens.size()];
+    public static double calculateMath(List<EToken> tokens) {
+        final double[] stack = new double[tokens.size()];
         int i = 0;
         for (EToken t : tokens) {
             if (t.is(EType.TOKEN) || t.is(EType.NUMB) || t.is(EType.PARAM)) {
                 stack[i++] = t.getValue();
             } else {
-                float b = stack[i-- - 1];
-                float a = stack[i-- - 1];
+                double b = stack[i-- - 1];
+                double a = stack[i-- - 1];
                 stack[i++] = SupportedOperations.calculate(a, b, t.getType());
             }
         }
         return stack[i-- - 1];
     }
-
-//    /**
-//     * Calculate conditional {@param expression}. Every {@param expression} convert
-//     * to Reverse Polish Notation {@link ReversePolishNotation}
-//     *
-//     * @return boolean as a result
-//     */
-//    public boolean calculateConditional(String expression) {
-//        return calculateConditional(ReversePolishNotation.create(expression));
-//    }
 
     /**
      * Calculate conditional {@param expression} the Reverse Polish Notation {@link ReversePolishNotation}
@@ -60,21 +40,21 @@ public class ExpressionCalculator {
         Boolean result = null;
         Boolean tempResult = null;
         int i = 0;
-        final float[] stack = new float[tokens.size()];
+        final double[] stack = new double[tokens.size()];
         for (EToken t : tokens) {
             if (t.is(EType.TOKEN) || t.is(EType.NUMB) || t.is(EType.PARAM)) {
                 stack[i++] = t.getValue();
                 continue;
             }
             if (SupportedOperations.isMath(t.getType())) {
-                float b = stack[i-- - 1];
-                float a = stack[i-- - 1];
+                double b = stack[i-- - 1];
+                double a = stack[i-- - 1];
                 stack[i++] = SupportedOperations.calculate(a, b, t.getType());
                 continue;
             }
             if (SupportedOperations.isCondition(t.getType())) {
-                float b = stack[i-- - 1];
-                float a = stack[i-- - 1];
+                double b = stack[i-- - 1];
+                double a = stack[i-- - 1];
                 result = tempResult;
                 tempResult = SupportedOperations.doCondition(a, b, t.getType());
                 continue;
