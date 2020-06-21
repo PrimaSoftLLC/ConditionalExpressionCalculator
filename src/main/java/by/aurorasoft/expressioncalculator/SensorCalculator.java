@@ -104,7 +104,7 @@ public class SensorCalculator {
                     t.setValue(value);
                 } else {
                     SensorI s = sensorMap.get(t.getTokenId());
-                    t.setValue(SensorCalculator.calculateValue(s, m, sensorMap));
+                    t.setValue(s.calculateValue(m, sensorMap));
                 }
             }
         }

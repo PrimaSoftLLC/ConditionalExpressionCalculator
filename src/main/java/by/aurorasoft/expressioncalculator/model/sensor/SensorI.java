@@ -29,4 +29,6 @@ public interface SensorI {
     void setCondition(List<EToken> tokens);
 
     Map<String, String> getOptions();
+
+    double calculateValue(MessageI m, Map<Long, ? extends SensorI> sensorMap);
 }

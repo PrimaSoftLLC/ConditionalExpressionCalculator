@@ -1,6 +1,8 @@
 package by.aurorasoft.expressioncalculator.model.sensor.impl;
 
+import by.aurorasoft.expressioncalculator.SensorCalculator;
 import by.aurorasoft.expressioncalculator.model.EToken;
+import by.aurorasoft.expressioncalculator.model.sensor.MessageI;
 import by.aurorasoft.expressioncalculator.model.sensor.ParameterI;
 import by.aurorasoft.expressioncalculator.model.sensor.SensorI;
 import lombok.Getter;
@@ -32,5 +34,10 @@ public class SensorImpl implements SensorI {
         this.formulaRaw = formulaRaw;
         this.conditionRaw = conditionRaw;
         this.options = options;
+    }
+
+    @Override
+    public double calculateValue(MessageI m, Map<Long, ? extends SensorI> sensorMap) {
+        return SensorCalculator.calculateValue(this, m, sensorMap);
     }
 }
