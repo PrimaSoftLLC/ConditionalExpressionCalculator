@@ -32,6 +32,23 @@ public class ExpressionCheckerTest {
     }
 
     @Test
+    public void checkMath4() {
+        checker.checkMath("{sensor_name}+2");
+    }
+
+    @Test
+    public void checkMath5() {
+        String actual = checker.checkMath("{sensor name}");
+        assertEquals("{sensor name}", actual);
+    }
+
+    @Test
+    public void checkMath6() {
+        String actual = checker.checkMath("{#speed}");
+        assertEquals("{#speed}", actual);
+    }
+
+    @Test
     public void check4() {
         checker.checkLogic("{101}>{111}");
     }

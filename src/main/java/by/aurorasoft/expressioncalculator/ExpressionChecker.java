@@ -206,7 +206,7 @@ public class ExpressionChecker {
                 countOperations++;
                 return Operand.OPERATION;
             }
-            if (r.is(EType.NUMB) || r.is(EType.TOKEN)) {
+            if (r.is(EType.NUMB) || r.is(EType.TOKEN) || r.is(EType.PARAM)) {
                 countNumbers++;
                 return Operand.NUMBER;
             }
