@@ -50,29 +50,29 @@ public class ExpressionCalculatorTest {
 
     @Test
     public void test() {
-        assertEquals(false, calculator.calculateConditional(ReversePolishNotation.create("0>0&0=0", List.of())));
+        assertFalse(calculator.calculateConditional(ReversePolishNotation.create("0>0&0=0", List.of())));
     }
 
     @Test
     public void calculateLogic() {
-        assertEquals(true, calculator.calculateConditional(ReversePolishNotation.create("10>0&100<120", List.of())));
-        assertEquals(true, calculator.calculateConditional(ReversePolishNotation.create("10+1>0&100+1<120", List.of())));
-        assertEquals(false, calculator.calculateConditional(ReversePolishNotation.create("10+1>0&100+100<120", List.of())));
-        assertEquals(false, calculator.calculateConditional(ReversePolishNotation.create("10>0&&100<1", List.of())));
-        assertEquals(true, calculator.calculateConditional(ReversePolishNotation.create("10>0|100<120", List.of())));
-        assertEquals(true, calculator.calculateConditional(ReversePolishNotation.create("10>0|100<120/2", List.of())));
-        assertEquals(true, calculator.calculateConditional(ReversePolishNotation.create("10>0|100<120|150>120", List.of())));
-        assertEquals(true, calculator.calculateConditional(ReversePolishNotation.create("10>50|100<120|150>120", List.of())));
-        assertEquals(true, calculator.calculateConditional(ReversePolishNotation.create("10>50|200<120|150>120", List.of())));
-        assertEquals(false, calculator.calculateConditional(ReversePolishNotation.create("10<50|200<120|200<120", List.of())));
-        assertEquals(false, calculator.calculateConditional(ReversePolishNotation.create("10<0|100>120|100>120", List.of())));
-        assertEquals(false, calculator.calculateConditional(ReversePolishNotation.create("10<0|(100>120&100>120)", List.of())));
-        assertEquals(true, calculator.calculateConditional(ReversePolishNotation.create("10<100|(100>120&100<120)", List.of())));
-        assertEquals(true, calculator.calculateConditional(ReversePolishNotation.create("10*2+2<100|(100>120&100<120)", List.of())));
+        assertTrue(calculator.calculateConditional(ReversePolishNotation.create("10>0&100<120", List.of())));
+        assertTrue(calculator.calculateConditional(ReversePolishNotation.create("10+1>0&100+1<120", List.of())));
+        assertFalse(calculator.calculateConditional(ReversePolishNotation.create("10+1>0&100+100<120", List.of())));
+        assertFalse(calculator.calculateConditional(ReversePolishNotation.create("10>0&&100<1", List.of())));
+        assertTrue(calculator.calculateConditional(ReversePolishNotation.create("10>0|100<120", List.of())));
+        assertTrue(calculator.calculateConditional(ReversePolishNotation.create("10>0|100<120/2", List.of())));
+        assertTrue(calculator.calculateConditional(ReversePolishNotation.create("10>0|100<120|150>120", List.of())));
+        assertTrue(calculator.calculateConditional(ReversePolishNotation.create("10>50|100<120|150>120", List.of())));
+        assertTrue(calculator.calculateConditional(ReversePolishNotation.create("10>50|200<120|150>120", List.of())));
+        assertFalse(calculator.calculateConditional(ReversePolishNotation.create("10<50|200<120|200<120", List.of())));
+        assertFalse(calculator.calculateConditional(ReversePolishNotation.create("10<0|100>120|100>120", List.of())));
+        assertFalse(calculator.calculateConditional(ReversePolishNotation.create("10<0|(100>120&100>120)", List.of())));
+        assertTrue(calculator.calculateConditional(ReversePolishNotation.create("10<100|(100>120&100<120)", List.of())));
+        assertTrue(calculator.calculateConditional(ReversePolishNotation.create("10*2+2<100|(100>120&100<120)", List.of())));
     }
 
     @Test
     public void calculateLogic2() {
-        assertEquals(false, calculator.calculateConditional(ReversePolishNotation.create("50<10|200<120|220<140", List.of())));
+        assertFalse(calculator.calculateConditional(ReversePolishNotation.create("50<10|200<120|220<140", List.of())));
     }
 }

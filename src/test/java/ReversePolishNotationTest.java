@@ -27,7 +27,7 @@ public class ReversePolishNotationTest {
 
     @Test
     public void test01() {
-        List<SensorI> rawTokens = List.of(new SensorImpl(123l, "speed-sensor", 123l, null, null, null, null, Map.of()));
+        List<SensorI> rawTokens = List.of(new SensorImpl(123L, "speed-sensor", 123L, null, null, null, null, Map.of()));
         List<EToken> actual = ReversePolishNotation.create("{x}*2+3", rawTokens);
         assertEquals(List.of(build("{0}"), build("2"), build("*"), build("3"), build("+")), actual);
     }
@@ -46,7 +46,7 @@ public class ReversePolishNotationTest {
 
     @Test
     public void test4() {
-        List<SensorI> rawTokens = List.of(new SensorImpl(123l, "rpm sensor", 123l, null, null, null, null, Map.of()));
+        List<SensorI> rawTokens = List.of(new SensorImpl(123L, "rpm sensor", 123L, null, null, null, null, Map.of()));
         List<EToken> actual = ReversePolishNotation.create("(6+{rpm sensor})", rawTokens);
         assertEquals(build(List.of("6", "{123}", "+")), actual);
     }

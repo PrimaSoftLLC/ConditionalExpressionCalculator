@@ -94,7 +94,7 @@ public class ExpressionChecker {
                 if (raw.charAt(index++) != '}') {
                     throw new IllegalArgumentException(String.format("Wrong expression: %s not found closing '}'", r.toString()));
                 }
-                rawTokens.add(new SensorImpl(dummyId++, r.toString(), 1l, null, null, null, null, Map.of()));
+                rawTokens.add(new SensorImpl(dummyId++, r.toString(), 1L, null, null, null, null, Map.of()));
             } else {
                 index++;
             }

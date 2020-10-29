@@ -1,12 +1,8 @@
 package by.aurorasoft.expressioncalculator;
 
 import by.aurorasoft.expressioncalculator.model.EToken;
-import by.aurorasoft.expressioncalculator.model.EType;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * calculate math or conditional or logic expression.
@@ -31,7 +27,7 @@ public class ExpressionCalculator {
                 stack[i++] = SupportedOperations.calculate(a, b, t.getType());
             }
         }
-        return stack[i-- - 1];
+        return stack[i - 1];
     }
 
     /**
