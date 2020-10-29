@@ -22,9 +22,9 @@ public class MessageImpl implements MessageI {
     private final String params;
 
     @Override
-    public double getFieldValue(String fieldName) {
+    public double getPropertyValue(String propertyName) {
         try {
-            Field field = this.getClass().getDeclaredField(fieldName);
+            Field field = this.getClass().getDeclaredField(propertyName);
             return Double.parseDouble(field.get(this).toString());
         } catch (Exception e) {
             return -999999;

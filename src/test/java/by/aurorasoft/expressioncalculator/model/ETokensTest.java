@@ -108,7 +108,7 @@ public class ETokensTest {
 
     @Test
     public void createParam() {
-        assertEquals(EToken.messageParamName("speed"), ETokens.create("{#speed}"));
+        assertEquals(EToken.property("speed"), ETokens.create("{#speed}"));
     }
 
     @Test(expected = IllegalArgumentException.class)

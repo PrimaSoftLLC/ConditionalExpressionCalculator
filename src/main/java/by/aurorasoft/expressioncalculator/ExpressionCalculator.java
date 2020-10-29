@@ -3,7 +3,10 @@ package by.aurorasoft.expressioncalculator;
 import by.aurorasoft.expressioncalculator.model.EToken;
 import by.aurorasoft.expressioncalculator.model.EType;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * calculate math or conditional or logic expression.
@@ -20,7 +23,7 @@ public class ExpressionCalculator {
         final double[] stack = new double[tokens.size()];
         int i = 0;
         for (EToken t : tokens) {
-            if (t.is(EType.TOKEN) || t.is(EType.NUMB) || t.is(EType.PARAM)) {
+            if (SupportedOperations.NUMBERABLE_TYPES.contains(t.getType())) {
                 stack[i++] = t.getValue();
             } else {
                 double b = stack[i-- - 1];
@@ -42,7 +45,7 @@ public class ExpressionCalculator {
         int i = 0;
         final double[] stack = new double[tokens.size()];
         for (EToken t : tokens) {
-            if (t.is(EType.TOKEN) || t.is(EType.NUMB) || t.is(EType.PARAM)) {
+            if (SupportedOperations.NUMBERABLE_TYPES.contains(t.getType())) {
                 stack[i++] = t.getValue();
                 continue;
             }

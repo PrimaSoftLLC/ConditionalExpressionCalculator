@@ -15,8 +15,9 @@ public enum EType {
     MORE(">"), MORE_E(">="), LESS("<="), LESS_E("<="), EQUAL("="), NOT_E("!="),
     OR("|"), AND("&"),
     NUMB("numb"),
-    TOKEN("token"),
-    PARAM("param"),
+    SENSOR_ID("token"),
+    PROPERTY("property"),
+    PARAMETER("parameter"),
     OPEN_B("("), CLOSE_B(")");
 
     public final String detail;

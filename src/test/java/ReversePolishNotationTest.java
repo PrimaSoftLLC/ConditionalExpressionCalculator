@@ -52,10 +52,17 @@ public class ReversePolishNotationTest {
     }
 
     @Test
-    public void testParam() {
+    public void testProperty() {
         List<SensorI> rawTokens = List.of();
         List<EToken> actual = ReversePolishNotation.create("(6+{#speed})", rawTokens);
         assertEquals(build(List.of("6", "{#speed}", "+")), actual);
+    }
+
+    @Test
+    public void testParameter() {
+        List<SensorI> rawTokens = List.of();
+        List<EToken> actual = ReversePolishNotation.create("(6+{@VBAT})", rawTokens);
+        assertEquals(build(List.of("6", "{@VBAT}", "+")), actual);
     }
 
     @Test

@@ -64,6 +64,16 @@ public class ExpressionCheckerTest {
     }
 
     @Test
+    public void checkLogicSensorsWithParameter1IsString() {
+        checker.checkLogic("({@param1}>{@param2})|({@param3}+{датчик4})");
+    }
+
+    @Test
+    public void checkMathParameter1IsString() {
+        checker.checkMath("({@param1}+{@param2})-({@param3}+{датчик4})");
+    }
+
+    @Test
     public void check6() {
         expectedEx.expect(IllegalArgumentException.class);
         expectedEx.expectMessage("Illegal logic expression - result is not boolean. Wrong use operand '+'");

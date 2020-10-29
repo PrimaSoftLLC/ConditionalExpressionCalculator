@@ -169,6 +169,19 @@ public class ExpressionIteratorTest {
     }
 
     @Test
+    public void test17_parameter() {
+        List<SensorI> rawTokens = List.of(buildSensor(112l, "sensor1"), buildSensor(113l, "sensor2"));
+        ExpressionIterator expressionIterator = new ExpressionIterator("{@param1}>10&{@param2}<30", rawTokens);
+        assertEquals(build("{@param1}"), expressionIterator.nextEToken());
+        assertEquals(build(">"), expressionIterator.nextEToken());
+        assertEquals(build("10"), expressionIterator.nextEToken());
+        assertEquals(build("&"), expressionIterator.nextEToken());
+        assertEquals(build("{@param2}"), expressionIterator.nextEToken());
+        assertEquals(build("<"), expressionIterator.nextEToken());
+        assertEquals(build("30"), expressionIterator.nextEToken());
+    }
+
+    @Test
     public void test17_1() {
         List<SensorI> rawTokens = List.of(buildSensor(112l, "sensor1"), buildSensor(113l, "sensor2"));
         ExpressionIterator expressionIterator = new ExpressionIterator("{sensor1}>10|{sensor2}<30", rawTokens);

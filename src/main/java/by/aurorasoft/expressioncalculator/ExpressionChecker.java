@@ -24,9 +24,9 @@ public class ExpressionChecker {
     private static final Set<EType> OPERATIONS = new HashSet<>();
 
     static {
-        OPERATIONS.addAll(SupportedOperations.MATH);
-        OPERATIONS.addAll(SupportedOperations.CONDITIONALS);
-        OPERATIONS.addAll(SupportedOperations.LOGIC);
+        OPERATIONS.addAll(SupportedOperations.MATH_TYPES);
+        OPERATIONS.addAll(SupportedOperations.CONDITIONALS_TYPES);
+        OPERATIONS.addAll(SupportedOperations.LOGIC_TYPES);
     }
 
     /**
@@ -206,7 +206,7 @@ public class ExpressionChecker {
                 countOperations++;
                 return Operand.OPERATION;
             }
-            if (r.is(EType.NUMB) || r.is(EType.TOKEN) || r.is(EType.PARAM)) {
+            if (SupportedOperations.NUMBERABLE_TYPES.contains(r.getType())) {
                 countNumbers++;
                 return Operand.NUMBER;
             }

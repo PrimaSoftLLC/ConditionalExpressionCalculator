@@ -118,7 +118,7 @@ public class SensorCalculatorTest {
     }
 
     @Test
-    public void calculateValueShouldReturnMinus999999IfUnknownParameter() {
+    public void calculateValueShouldReturnZeroIfUnknownParameter() {
 
         SensorI givenSensor = buildSensor(1l, "test", "null", new Calibration(), "{#unknown}", null, Map.of());
 
@@ -137,6 +137,83 @@ public class SensorCalculatorTest {
         Map<Long, SensorI> sensorMap = Map.of(givenSensor.getId(), givenSensor);
 
         assertEquals(Double.NaN, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
+    }
+
+    @Test
+    public void calculate_FromParameter() {
+
+        SensorI givenSensor = buildSensor(1l, "test", "null", new Calibration(), "{@param1}", null, Map.of());
+
+        MessageI m2 = buildMessage(2l, "2020-01-20T10:00:00Z", "param1:1:100,param2:1:200,param3:1:300");
+        Map<Long, SensorI> sensorMap = Map.of(givenSensor.getId(), givenSensor);
+
+        assertEquals(100, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
+    }
+
+    @Test
+    public void calculate_FromParameter2() {
+
+        SensorI givenSensor = buildSensor(1l, "test", "null", new Calibration(), "{@param1}+200", null, Map.of());
+
+        MessageI m2 = buildMessage(2l, "2020-01-20T10:00:00Z", "param1:1:100,param2:1:200,param3:1:300");
+        Map<Long, SensorI> sensorMap = Map.of(givenSensor.getId(), givenSensor);
+
+        assertEquals(300, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
+    }
+
+    @Test
+    public void calculate_FromParameterDouble() {
+
+        SensorI givenSensor = buildSensor(1l, "test", "null", new Calibration(), "{@param1}+200", null, Map.of());
+
+        MessageI m2 = buildMessage(2l, "2020-01-20T10:00:00Z", "param1:1:100.356,param2:1:200,param3:1:300");
+        Map<Long, SensorI> sensorMap = Map.of(givenSensor.getId(), givenSensor);
+
+        assertEquals(300.356, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
+    }
+
+    @Test
+    public void calculate_FromParameter_parameter1() {
+
+        SensorI givenSensor = buildSensor(1l, "test", "null", new Calibration(), "{@1}+200", null, Map.of());
+
+        MessageI m2 = buildMessage(2l, "2020-01-20T10:00:00Z", "1:1:100,param2:1:200,param3:1:300");
+        Map<Long, SensorI> sensorMap = Map.of(givenSensor.getId(), givenSensor);
+
+        assertEquals(300, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
+    }
+
+    @Test
+    public void calculate_FromParameter_parameter1_sum() {
+
+        SensorI givenSensor = buildSensor(1l, "test", "null", new Calibration(), "{@1}+{@2}+{@3}", null, Map.of());
+
+        MessageI m2 = buildMessage(2l, "2020-01-20T10:00:00Z", "1:1:100,2:1:200,3:1:300");
+        Map<Long, SensorI> sensorMap = Map.of(givenSensor.getId(), givenSensor);
+
+        assertEquals(600, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
+    }
+
+    @Test
+    public void calculate_conditional_fromParameter() {
+
+        SensorI givenSensor = buildSensor(1l, "test", "null", new Calibration(), "{@param1}", "{@param1}>500", Map.of());
+
+        MessageI m2 = buildMessage(2l, "2020-01-20T10:00:00Z", "param1:1:100,param2:1:200,param3:1:300");
+        Map<Long, SensorI> sensorMap = Map.of(givenSensor.getId(), givenSensor);
+
+        assertEquals(Double.NaN, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
+    }
+
+    @Test
+    public void calculate_conditional_fromParameter2() {
+
+        SensorI givenSensor = buildSensor(1l, "test", "null", new Calibration(), "{@param1}", "{@param1}<500", Map.of());
+
+        MessageI m2 = buildMessage(2l, "2020-01-20T10:00:00Z", "param1:1:100,param2:1:200,param3:1:300");
+        Map<Long, SensorI> sensorMap = Map.of(givenSensor.getId(), givenSensor);
+
+        assertEquals(100, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
     }
 
     private SensorImpl buildSensor(Long id, String name, String parameter, Calibration calibration, String formulaRaw, String conditionRaw, Map<String, String> options) {

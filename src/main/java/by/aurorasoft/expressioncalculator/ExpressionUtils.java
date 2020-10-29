@@ -20,8 +20,8 @@ public class ExpressionUtils {
             return r;
         }
         for (EToken t : tokens) {
-            if (t.is(EType.TOKEN)) {
-                r.add(t.getTokenId());
+            if (t.is(EType.SENSOR_ID)) {
+                r.add(t.getSensorId());
             }
         }
         return r;

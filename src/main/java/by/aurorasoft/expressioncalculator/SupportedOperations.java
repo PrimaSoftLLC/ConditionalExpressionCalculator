@@ -8,18 +8,22 @@ import java.util.Set;
 
 public abstract class SupportedOperations {
 
-    public static final char MESSAGE_PARAM_TOKEN = '#';
+    public static final char MESSAGE_PROPERTY_TOKEN = '#';
+
+    public static final char MESSAGE_PARAMETER_TOKEN = '@';
 
     public static final Set<String> AVAILABLE_PARAMS = Set.of("latitude", "longitude", "altitude", "speed", "amountSatellite", "course");
 
     public static final char START_SENSOR_ID_TOKEN = '{';
     public static final char END_SENSOR_ID_TOKEN = '}';
 
-    public static final Set<EType> MATH = Set.of(EType.MULT, EType.DIV, EType.PLUS, EType.MINUS);
+    public static final Set<EType> NUMBERABLE_TYPES = Set.of(EType.SENSOR_ID, EType.NUMB, EType.PROPERTY, EType.PARAMETER);
 
-    public static final Set<EType> CONDITIONALS = Set.of(EType.MORE, EType.MORE_E, EType.LESS, EType.LESS_E, EType.EQUAL, EType.NOT_E);
+    public static final Set<EType> MATH_TYPES = Set.of(EType.MULT, EType.DIV, EType.PLUS, EType.MINUS);
 
-    public static final Set<EType> LOGIC = Set.of(EType.OR, EType.AND);
+    public static final Set<EType> CONDITIONALS_TYPES = Set.of(EType.MORE, EType.MORE_E, EType.LESS, EType.LESS_E, EType.EQUAL, EType.NOT_E);
+
+    public static final Set<EType> LOGIC_TYPES = Set.of(EType.OR, EType.AND);
 
     public static final Set<Character> UNO_OPERATIONS = Set.of(
             EType.PLUS.detail.charAt(0), EType.MINUS.detail.charAt(0), EType.MULT.detail.charAt(0),
@@ -50,15 +54,15 @@ public abstract class SupportedOperations {
     }
 
     public static boolean isCondition(EType operation){
-        return CONDITIONALS.contains(operation);
+        return CONDITIONALS_TYPES.contains(operation);
     }
 
     public static boolean isLogic(EType operation){
-        return LOGIC.contains(operation);
+        return LOGIC_TYPES.contains(operation);
     }
 
     public static boolean isMath(EType operation){
-        return MATH.contains(operation);
+        return MATH_TYPES.contains(operation);
     }
 
     public static double calculate(double a, double b, EType operand){

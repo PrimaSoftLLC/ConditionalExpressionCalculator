@@ -88,10 +88,13 @@ public class ExpressionIterator {
 
     private String getIdByName(String name) {
         StringBuilder builder = new StringBuilder("" + SupportedOperations.START_SENSOR_ID_TOKEN);
-        if(name.charAt(0) == SupportedOperations.MESSAGE_PARAM_TOKEN){
-            if(!SupportedOperations.AVAILABLE_PARAMS.contains(name.substring(1))){
+        if (name.charAt(0) == SupportedOperations.MESSAGE_PROPERTY_TOKEN) {
+            if (!SupportedOperations.AVAILABLE_PARAMS.contains(name.substring(1))) {
                 throw new IllegalArgumentException(String.format("param with name: %s is not available", name));
             }
+            return builder.append(name).append(SupportedOperations.END_SENSOR_ID_TOKEN).toString();
+        }
+        if (name.charAt(0) == SupportedOperations.MESSAGE_PARAMETER_TOKEN) {
             return builder.append(name).append(SupportedOperations.END_SENSOR_ID_TOKEN).toString();
         }
         for (SensorI rawToken : rawTokens) {

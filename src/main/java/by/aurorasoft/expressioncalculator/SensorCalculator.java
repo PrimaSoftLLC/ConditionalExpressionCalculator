@@ -31,7 +31,10 @@ public class SensorCalculator {
      */
     public static double calculateWithoutCondition(SensorI sensor, MessageI m, Map<Long, ? extends SensorI> sensorMap) {
         buildFormula(sensor, sensorMap);
-        double v = getValueByName(sensor, m.getParams());
+        double v = 0;
+        if (sensor.getParameter() != null) {
+            v = getValueByName(sensor.getParameter().getName(), m);
+        }
         if (sensor.getFormulaRaw() != null && sensor.getFormula().size() > 0) {
             replaceTokens(sensorMap, sensor.getFormula(), v, m);
             v = convertCalibration(sensor, ExpressionCalculator.calculateMath(sensor.getFormula()));
@@ -65,26 +68,11 @@ public class SensorCalculator {
         return ExpressionCalculator.calculateConditional(c);
     }
 
-    private static double getValueByName(SensorI sensor, String raw) {
-        try {
-            if (sensor.getParameter() == null) {
-                return 0;
-            }
-            String name = sensor.getParameter().getName() + ':';
-            int start = raw.indexOf(name);
-            if (start == -1) {
-                return -1;
-            }
-            start = start + name.length() + 2;
-            int end = raw.indexOf(',', start);
-            if (end == -1) {
-                return Double.parseDouble(raw.substring(start));
-            } else {
-                return Double.parseDouble(raw.substring(start, end));
-            }
-        } catch (Exception e) {
-            return -999;
+    private static double getValueByName(String parameterName, MessageI m) {
+        if (parameterName == null || m == null) {
+            return 0;
         }
+        return m.getParameterValue(parameterName);
     }
 
     private static double convertCalibration(SensorI sensor, double value) {
@@ -96,14 +84,17 @@ public class SensorCalculator {
      */
     private static void replaceTokens(Map<Long, ? extends SensorI> sensorMap, List<EToken> tokens, double value, MessageI m) {
         for (EToken t : tokens) {
-            if(t.is(EType.PARAM)){
-                t.setValue(m.getFieldValue(t.getParamName()));
+            if (t.is(EType.PROPERTY)) {
+                t.setValue(m.getPropertyValue(t.getPropertyName()));
             }
-            if (t.is(EType.TOKEN)) {
-                if (t.getTokenId() == 0) {
+            if (t.is(EType.PARAMETER)) {
+                t.setValue(m.getParameterValue(t.getParameterName()));
+            }
+            if (t.is(EType.SENSOR_ID)) {
+                if (t.getSensorId() == 0) {
                     t.setValue(value);
                 } else {
-                    SensorI s = sensorMap.get(t.getTokenId());
+                    SensorI s = sensorMap.get(t.getSensorId());
                     t.setValue(s.calculateValue(m, sensorMap));
                 }
             }
@@ -115,8 +106,8 @@ public class SensorCalculator {
             if (sensor.getConditionRaw() != null && sensor.getCondition() == null) {
                 sensor.setCondition(ReversePolishNotation.create(sensor.getConditionRaw(), sensorMap.values()));
             }
-        } catch (Exception e){
-         log.error("Sensor: '{}' condition: '{}' can not be build. Message: '{}'", sensor.getId(), sensor.getConditionRaw(), e.getMessage());
+        } catch (Exception e) {
+            log.error("Sensor: '{}' condition: '{}' can not be build. Message: '{}'", sensor.getId(), sensor.getConditionRaw(), e.getMessage());
             sensor.setCondition(List.of());
         }
         return sensor.getCondition();
@@ -125,9 +116,10 @@ public class SensorCalculator {
     public static List<EToken> buildFormula(SensorI sensor, Map<Long, ? extends SensorI> sensorMap) {
         try {
             if (sensor.getFormulaRaw() != null && sensor.getFormula() == null) {
-                sensor.setFormula(ReversePolishNotation.create(sensor.getFormulaRaw(), sensorMap.values()));
+                List<EToken> reversePolishNotation = ReversePolishNotation.create(sensor.getFormulaRaw(), sensorMap.values());
+                sensor.setFormula(reversePolishNotation);
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Sensor: '{}' formula: '{}' can not be build. Message: '{}'", sensor.getId(), sensor.getFormulaRaw(), e.getMessage());
             sensor.setFormula(List.of());
         }
