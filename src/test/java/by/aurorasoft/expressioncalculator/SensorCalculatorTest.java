@@ -216,6 +216,39 @@ public class SensorCalculatorTest {
         assertEquals(100, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
     }
 
+    @Test
+    public void calculate_formula_fromParameter_Ifunexist() {
+
+        SensorI givenSensor = buildSensor(1l, "test", "null", new Calibration(), "{@unexist}", null, Map.of());
+
+        MessageI m2 = buildMessage(2l, "2020-01-20T10:00:00Z", "param1:1:100,param2:1:200,param3:1:300");
+        Map<Long, SensorI> sensorMap = Map.of(givenSensor.getId(), givenSensor);
+
+        assertEquals(0, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
+    }
+
+    @Test
+    public void calculate_conditional_fromParameter_Ifunexist() {
+
+        SensorI givenSensor = buildSensor(1l, "test", "null", new Calibration(), "{@param1}", "{@unexists}>0", Map.of());
+
+        MessageI m2 = buildMessage(2l, "2020-01-20T10:00:00Z", "param1:1:100,param2:1:200,param3:1:300");
+        Map<Long, SensorI> sensorMap = Map.of(givenSensor.getId(), givenSensor);
+
+        assertEquals(Double.NaN, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
+    }
+
+    @Test
+    public void calculate_formula_fromParameter_IfEmpty() {
+
+        SensorI givenSensor = buildSensor(1l, "test", "null", new Calibration(), "{@param1}", null, Map.of());
+
+        MessageI m2 = buildMessage(2l, "2020-01-20T10:00:00Z", "");
+        Map<Long, SensorI> sensorMap = Map.of(givenSensor.getId(), givenSensor);
+
+        assertEquals(0, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
+    }
+
     private SensorImpl buildSensor(Long id, String name, String parameter, Calibration calibration, String formulaRaw, String conditionRaw, Map<String, String> options) {
         return new SensorImpl(id, name, 123l,
                 parameter.equalsIgnoreCase("null") ? null : new ParameterImpl(23l, parameter),
