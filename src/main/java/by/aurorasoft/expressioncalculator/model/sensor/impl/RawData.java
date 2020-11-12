@@ -5,8 +5,10 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class RawData implements Comparable<RawData> {
+public class RawData implements Comparable<RawData>, Serializable {
 
     private final double inValue;
     private final double actualValue;
