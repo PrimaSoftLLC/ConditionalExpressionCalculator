@@ -8,13 +8,14 @@ import lombok.Data;
 import lombok.Getter;
 
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
 @Data
 @Getter
-public class Calibration {
+public class Calibration implements Serializable {
     private final TreeSet<ProcessedData> processedDataList;
     private final TreeSet<RawData> rawDataList;
 

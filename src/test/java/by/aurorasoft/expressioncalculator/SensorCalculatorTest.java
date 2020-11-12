@@ -239,6 +239,17 @@ public class SensorCalculatorTest {
     }
 
     @Test
+    public void calculate_Bug() {
+
+        SensorI givenSensor = buildSensor(1L, "power", "66", new Calibration(), "{x}/1000", "{x}>=0", Map.of());
+
+        MessageI m2 = buildMessage(2L, "2020-01-20T10:00:00Z", "param1:1:100,param2:1:200,param3:1:300");
+        Map<Long, SensorI> sensorMap = Map.of(givenSensor.getId(), givenSensor);
+
+        assertEquals(0, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
+    }
+
+    @Test
     public void calculate_formula_fromParameter_IfEmpty() {
 
         SensorI givenSensor = buildSensor(1L, "test", "null", new Calibration(), "{@param1}", null, Map.of());
