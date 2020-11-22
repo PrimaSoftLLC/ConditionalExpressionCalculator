@@ -42,19 +42,19 @@ public interface MessageI {
         try {
             return Double.parseDouble(this.getClass().getMethod("get" + StringUtils.capitalize(propertyName)).invoke(this).toString());
         } catch (Exception e){
-            return -999999;
+            return Double.NaN;
         }
     }
 
     default double getParameterValue(String parameterName) {
         try {
             if (parameterName == null) {
-                return 0;
+                return Double.NaN;
             }
             String name = parameterName + ":1:";
             int start = getParams().indexOf(name);
             if (start == -1) {
-                return 0;
+                return Double.NaN;
             }
             start = start + name.length();
             int end = getParams().indexOf(',', start);
@@ -64,7 +64,7 @@ public interface MessageI {
                 return Double.parseDouble(getParams().substring(start, end));
             }
         } catch (Exception e) {
-            return 0;
+            return Double.NaN;
         }
     }
 

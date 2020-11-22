@@ -70,7 +70,7 @@ public class SensorCalculator {
 
     private static double getValueByName(String parameterName, MessageI m) {
         if (parameterName == null || m == null) {
-            return 0;
+            return Double.NaN;
         }
         return m.getParameterValue(parameterName);
     }
