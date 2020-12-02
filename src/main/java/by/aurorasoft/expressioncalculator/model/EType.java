@@ -12,7 +12,7 @@ package by.aurorasoft.expressioncalculator.model;
  */
 public enum EType {
     PLUS("+"), MINUS("-"), MULT("*"), DIV("/"),
-    MORE(">"), MORE_E(">="), LESS("<="), LESS_E("<="), EQUAL("="), NOT_E("!="),
+    MORE(">"), MORE_E(">="), LESS("<"), LESS_E("<="), EQUAL("="), NOT_E("!="),
     OR("|"), AND("&"),
     NUMB("numb"),
     SENSOR_ID("token"),

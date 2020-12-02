@@ -73,6 +73,13 @@ public class ReversePolishNotationTest {
     }
 
     @Test
+    public void test66() {
+
+        List<EToken> actual = ReversePolishNotation.create("10<5", List.of());
+        assertEquals(build(List.of("10", "5","<")), actual);
+    }
+
+    @Test
     public void test5() {
         List<EToken> actual = ReversePolishNotation.create("(6+10)", List.of());
         assertEquals(build(List.of("6", "10", "+")), actual);

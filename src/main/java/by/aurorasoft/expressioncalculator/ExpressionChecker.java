@@ -49,6 +49,12 @@ public class ExpressionChecker {
                 throw new IllegalArgumentException(String.format("Illegal operation '%s' ", t.getType().detail));
             }
         }
+
+        try {
+            ExpressionCalculator.calculateMath(tokens);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Wrong math expression");
+        }
         return raw;
     }
 
@@ -187,6 +193,13 @@ public class ExpressionChecker {
             throw new IllegalArgumentException(
                     String.format("Illegal logic expression - result is not boolean. Wrong use operand '%s'",
                             tokens.get(tokens.size() - 1).getType().detail));
+        }
+
+        // check can calculate
+        try {
+            ExpressionCalculator.calculateConditional(tokens);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Wrong logic expression");
         }
     }
 

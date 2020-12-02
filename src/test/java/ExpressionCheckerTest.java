@@ -58,6 +58,26 @@ public class ExpressionCheckerTest {
         checker.checkLogic("({101}>{111})|({234}+{456})");
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void check_logic() {
+        checker.checkLogic("0<{датчик}<1500");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void check_logic23() {
+        checker.checkLogic("0<{датчик}<1500+10");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void check_logic3() {
+        checker.checkLogic("<{датчик}+3");
+    }
+
+    @Test
+    public void check_logic2() {
+        checker.checkLogic("0<{датчик}&{датчик}>1500");
+    }
+
     @Test
     public void checkMathSensorsIsString() {
         checker.checkLogic("({датчик1}>{датчик2})|({датчик3}+{датчик4})");
