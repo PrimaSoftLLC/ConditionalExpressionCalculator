@@ -21,6 +21,7 @@ public class ExpressionCalculatorTest {
         assertEquals(10, calculator.calculateMath(ReversePolishNotation.create("10+10-10", List.of())), 0);
         assertEquals(-80, calculator.calculateMath(ReversePolishNotation.create("10+10-100", List.of())), 0);
         assertEquals(124, calculator.calculateMath(ReversePolishNotation.create("123000/1000+1", List.of())), 0);
+        assertEquals(257, calculator.calculateMath(ReversePolishNotation.create("123000*2/1000+11", List.of())), 0);
     }
 
     @Test
