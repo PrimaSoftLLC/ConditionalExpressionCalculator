@@ -1,7 +1,6 @@
 package by.aurorasoft.expressioncalculator;
 
 import by.aurorasoft.expressioncalculator.model.sensor.MessageI;
-
 import by.aurorasoft.expressioncalculator.model.sensor.SensorI;
 import by.aurorasoft.expressioncalculator.model.sensor.impl.*;
 import org.junit.Test;
@@ -258,6 +257,23 @@ public class SensorCalculatorTest {
         Map<Long, SensorI> sensorMap = Map.of(givenSensor.getId(), givenSensor);
 
         assertEquals(Double.NaN, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
+    }
+
+    @Test
+    public void calculate_formula_when_parameter119And9() {
+
+        SensorI givenSensor = buildSensor(1L, "test", "null", new Calibration(), "{@9}", null, Map.of());
+
+        MessageI m2 = buildMessage(2L, "2020-01-20T10:00:00Z", "5:1:0,21:1:4,240:1:1,119:1:1,120:1:1,141:1:0,66:1:13008,67:1:4334,9:1:12807,24:1:0,125:1:423,_odv:1:3418469.60");
+        Map<Long, SensorI> sensorMap = Map.of(givenSensor.getId(), givenSensor);
+
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < 1000000; i++) {
+            SensorCalculator.calculateValue(givenSensor, m2, sensorMap);
+        }
+        System.out.println(System.currentTimeMillis() - start);
+
+        assertEquals(12807.0, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
     }
 
     private SensorImpl buildSensor(Long id, String name, String parameter, Calibration calibration, String formulaRaw, String conditionRaw, Map<String, String> options) {

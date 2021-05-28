@@ -8,7 +8,9 @@ public interface MessageI {
 
     Long getId();
 
-    /** UTC */
+    /**
+     * UTC
+     */
     Instant getDatetime();
 
     float getLatitude();
@@ -26,6 +28,7 @@ public interface MessageI {
     int getSpeed();
 
     int getAmountSatellite();
+
     int getCourse();
 
     /**
@@ -36,12 +39,13 @@ public interface MessageI {
 
     /**
      * should get value from field for speed, latitude, longitude, amountSatellite, course, altitude
+     *
      * @return value or -999999 if was exception
      */
     default double getPropertyValue(String propertyName) {
         try {
             return Double.parseDouble(this.getClass().getMethod("get" + StringUtils.capitalize(propertyName)).invoke(this).toString());
-        } catch (Exception e){
+        } catch (Exception e) {
             return Double.NaN;
         }
     }
@@ -52,7 +56,13 @@ public interface MessageI {
                 return Double.NaN;
             }
             String name = parameterName + ":1:";
-            int start = getParams().indexOf(name);
+            int start;
+            if (getParams().startsWith(name)) {
+                start = 0;
+            } else {
+                name = "," + name;
+                start = getParams().indexOf(name);
+            }
             if (start == -1) {
                 return Double.NaN;
             }
