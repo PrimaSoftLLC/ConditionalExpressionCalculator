@@ -68,7 +68,10 @@ public class SensorCalculator {
         return ExpressionCalculator.calculateConditional(c);
     }
 
-    private static double getValueByName(String parameterName, MessageI m) {
+    /**
+     * get message parameter value by name
+     */
+    public static double getValueByName(String parameterName, MessageI m) {
         if (parameterName == null || m == null) {
             return Double.NaN;
         }
