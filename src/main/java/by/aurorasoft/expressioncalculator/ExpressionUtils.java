@@ -3,7 +3,9 @@ package by.aurorasoft.expressioncalculator;
 import by.aurorasoft.expressioncalculator.model.EToken;
 import by.aurorasoft.expressioncalculator.model.EType;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class ExpressionUtils {
@@ -25,6 +27,21 @@ public class ExpressionUtils {
             }
         }
         return r;
+    }
+
+    public static List<String> getAllParamNamesFromExpression(String expression) {
+        List<String> result = new ArrayList<>();
+        int start = 0;
+        int finish;
+        while (start != -1) {
+            start = expression.indexOf(SupportedOperations.MESSAGE_PARAMETER_TOKEN, start);
+            if (start > 0) {
+                finish = expression.indexOf('}', start);
+                start++;
+                result.add(expression.substring(start, finish));
+            }
+        }
+        return result;
     }
 
 //    /**
