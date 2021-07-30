@@ -3,9 +3,7 @@ package by.aurorasoft.expressioncalculator;
 import by.aurorasoft.expressioncalculator.model.EToken;
 import by.aurorasoft.expressioncalculator.model.EType;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class ExpressionUtils {
@@ -30,6 +28,9 @@ public class ExpressionUtils {
     }
 
     public static Set<String> getAllParamNamesFromExpression(String expression) {
+        if (expression == null) {
+            return Set.of();
+        }
         Set<String> result = new HashSet<>();
         int start = 0;
         int finish;
