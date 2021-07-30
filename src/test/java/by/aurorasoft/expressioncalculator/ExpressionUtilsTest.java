@@ -10,7 +10,6 @@ public class ExpressionUtilsTest {
 
     @Test
     public void getAllParamNamesFromExperession() {
-
         assertEquals(Set.of(), ExpressionUtils.getAllParamNamesFromExpression(null));
         assertEquals(Set.of(), ExpressionUtils.getAllParamNamesFromExpression(""));
         assertEquals(Set.of(), ExpressionUtils.getAllParamNamesFromExpression("123"));
