@@ -2,7 +2,7 @@ package by.aurorasoft.expressioncalculator;
 
 import org.junit.Test;
 
-import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -10,12 +10,13 @@ public class ExpressionUtilsTest {
 
     @Test
     public void getAllParamNamesFromExperession() {
-        assertEquals(List.of(), ExpressionUtils.getAllParamNamesFromExpression(""));
-        assertEquals(List.of(), ExpressionUtils.getAllParamNamesFromExpression("123"));
-        assertEquals(List.of(), ExpressionUtils.getAllParamNamesFromExpression("{}"));
-        assertEquals(List.of(), ExpressionUtils.getAllParamNamesFromExpression("aaa"));
-        assertEquals(List.of("123"), ExpressionUtils.getAllParamNamesFromExpression("{@123}"));
-        assertEquals(List.of(), ExpressionUtils.getAllParamNamesFromExpression("{123}"));
-        assertEquals(List.of("123", "1"), ExpressionUtils.getAllParamNamesFromExpression("{@123}+{@1}"));
+        assertEquals(Set.of(), ExpressionUtils.getAllParamNamesFromExpression(""));
+        assertEquals(Set.of(), ExpressionUtils.getAllParamNamesFromExpression("123"));
+        assertEquals(Set.of(), ExpressionUtils.getAllParamNamesFromExpression("{}"));
+        assertEquals(Set.of(), ExpressionUtils.getAllParamNamesFromExpression("aaa"));
+        assertEquals(Set.of("123"), ExpressionUtils.getAllParamNamesFromExpression("{@123}"));
+        assertEquals(Set.of(), ExpressionUtils.getAllParamNamesFromExpression("{123}"));
+        assertEquals(Set.of("123", "1"), ExpressionUtils.getAllParamNamesFromExpression("{@123}+{@1}"));
+        assertEquals(Set.of("123"), ExpressionUtils.getAllParamNamesFromExpression("{@123}+{@123}"));
     }
 }

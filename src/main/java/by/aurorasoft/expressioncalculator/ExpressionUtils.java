@@ -29,8 +29,8 @@ public class ExpressionUtils {
         return r;
     }
 
-    public static List<String> getAllParamNamesFromExpression(String expression) {
-        List<String> result = new ArrayList<>();
+    public static Set<String> getAllParamNamesFromExpression(String expression) {
+        Set<String> result = new HashSet<>();
         int start = 0;
         int finish;
         while (start != -1) {
