@@ -1,5 +1,6 @@
 package by.aurorasoft.expressioncalculator.model.sensor;
 
+import by.aurorasoft.expressioncalculator.SupportedOperations;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.Instant;
@@ -55,7 +56,7 @@ public interface MessageI {
             if (parameterName == null) {
                 return Double.NaN;
             }
-            String name = parameterName + ":1:";
+            String name = parameterName + SupportedOperations.MESSAGE_PARAMS_KEY_VALUE_SEPARATOR;
             int start;
             if (getParams().startsWith(name)) {
                 start = 0;

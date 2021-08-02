@@ -8,6 +8,8 @@ import java.util.Set;
 
 public abstract class SupportedOperations {
 
+    public static final String MESSAGE_PARAMS_KEY_VALUE_SEPARATOR = ":";
+
     public static final char MESSAGE_PROPERTY_TOKEN = '#';
 
     public static final char MESSAGE_PARAMETER_TOKEN = '@';
