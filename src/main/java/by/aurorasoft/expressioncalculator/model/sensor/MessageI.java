@@ -1,6 +1,6 @@
 package by.aurorasoft.expressioncalculator.model.sensor;
 
-import by.aurorasoft.expressioncalculator.SupportedOperations;
+import by.aurorasoft.expressioncalculator.ParametersUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.Instant;
@@ -52,31 +52,6 @@ public interface MessageI {
     }
 
     default double getParameterValue(String parameterName) {
-        try {
-            if (parameterName == null) {
-                return Double.NaN;
-            }
-            String name = parameterName + SupportedOperations.MESSAGE_PARAMS_KEY_VALUE_SEPARATOR;
-            int start;
-            if (getParams().startsWith(name)) {
-                start = 0;
-            } else {
-                name = "," + name;
-                start = getParams().indexOf(name);
-            }
-            if (start == -1) {
-                return Double.NaN;
-            }
-            start = start + name.length();
-            int end = getParams().indexOf(',', start);
-            if (end == -1) {
-                return Double.parseDouble(getParams().substring(start));
-            } else {
-                return Double.parseDouble(getParams().substring(start, end));
-            }
-        } catch (Exception e) {
-            return Double.NaN;
-        }
+        return ParametersUtil.getParameterValue(parameterName, getParams());
     }
-
 }
