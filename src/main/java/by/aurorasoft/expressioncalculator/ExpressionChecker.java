@@ -30,12 +30,12 @@ public class ExpressionChecker {
     }
 
     /**
-     * @throws IllegalArgumentException if {@param raw} is not valid matematical expression
-     * @returns return corrected expression
+     * @throws IllegalArgumentException if {@param raw} is not valid mathematical expression
+     * @return return corrected expression
      */
     public String checkMath(String raw) {
         if (raw == null) {
-            return raw;
+            return null;
         }
         raw = removeRedundantSpaces(raw);
         if (raw.length() == 0) {
@@ -98,9 +98,9 @@ public class ExpressionChecker {
                     index--;
                 }
                 if (raw.charAt(index++) != '}') {
-                    throw new IllegalArgumentException(String.format("Wrong expression: %s not found closing '}'", r.toString()));
+                    throw new IllegalArgumentException(String.format("Wrong expression: %s not found closing '}'", r));
                 }
-                rawTokens.add(new SensorImpl(dummyId++, r.toString(), 1L, null, null, null, null, Map.of()));
+                rawTokens.add(new SensorImpl(dummyId++, r.toString(), 1L, null, null, null, Map.of()));
             } else {
                 index++;
             }
@@ -110,11 +110,11 @@ public class ExpressionChecker {
 
     /**
      * @throws IllegalArgumentException if {@param raw} is not valid logic expression
-     * @returns return corrected expression
+     * @return return corrected expression
      */
     public String checkLogic(String raw) {
         if (raw == null) {
-            return raw;
+            return null;
         }
         raw = removeRedundantSpaces(raw);
         if (raw.length() == 0) {

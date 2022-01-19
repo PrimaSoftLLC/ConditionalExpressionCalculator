@@ -38,6 +38,9 @@ public interface MessageI {
      */
     String getParams();
 
+    /** meters */
+    double getGpsOdometer();
+
     /**
      * should get value from field for speed, latitude, longitude, amountSatellite, course, altitude
      *

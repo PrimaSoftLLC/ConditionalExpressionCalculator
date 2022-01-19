@@ -19,6 +19,7 @@ public class MessageImpl implements MessageI {
     private final int speed;
     private final int amountSatellite;
     private final int course;
+    private final double gpsOdometer;
     private final String params;
 
     @Override

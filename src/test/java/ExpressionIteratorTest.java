@@ -55,8 +55,8 @@ public class ExpressionIteratorTest {
     @Test
     public void test6() {
         List<SensorI> rawTokens = List.of(
-                new SensorImpl(112L, "sensor1", 123L, null, null, null, null, Map.of()),
-                new SensorImpl(113L, "sensor2", 123L, null, null, null, null, Map.of()));
+                new SensorImpl(112L, "sensor1", 123L,  null, null, null, Map.of()),
+                new SensorImpl(113L, "sensor2", 123L, null, null, null, Map.of()));
         ExpressionIterator expressionIterator = new ExpressionIterator("{sensor1}>0", rawTokens);
         assertEquals(build("{112}"), expressionIterator.nextEToken());
         assertEquals(build(">"), expressionIterator.nextEToken());
@@ -269,6 +269,6 @@ public class ExpressionIteratorTest {
     }
 
     private SensorI buildSensor(Long id, String name) {
-        return new SensorImpl(id, name, 123L, null, null, null, null, Map.of());
+        return new SensorImpl(id, name, 123L,  null, null, null, Map.of());
     }
 }

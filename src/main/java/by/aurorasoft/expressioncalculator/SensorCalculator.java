@@ -32,9 +32,6 @@ public class SensorCalculator {
     public static double calculateWithoutCondition(SensorI sensor, MessageI m, Map<Long, ? extends SensorI> sensorMap) {
         buildFormula(sensor, sensorMap);
         double v = 0;
-        if (sensor.getParameter() != null) {
-            v = getValueByName(sensor.getParameter().getName(), m);
-        }
         if (sensor.getFormulaRaw() != null && sensor.getFormula().size() > 0) {
             replaceTokens(sensorMap, sensor.getFormula(), v, m);
             v = convertCalibration(sensor, ExpressionCalculator.calculateMath(sensor.getFormula()));

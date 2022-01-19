@@ -12,8 +12,6 @@ public interface SensorI {
 
     String getName();
 
-    ParameterI getParameter();
-
     Calibration getCalibration();
 
     String getFormulaRaw();
