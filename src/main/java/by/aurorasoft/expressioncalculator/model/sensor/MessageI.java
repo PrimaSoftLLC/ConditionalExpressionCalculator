@@ -41,6 +41,9 @@ public interface MessageI {
     /** meters */
     double getGpsOdometer();
 
+    /** percents */
+    int getGsmStrength();
+
     /**
      * should get value from field for speed, latitude, longitude, amountSatellite, course, altitude
      *
