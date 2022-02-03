@@ -21,6 +21,7 @@ public class MessageImpl implements MessageI {
     private final int course;
     private final double gpsOdometer;
     private final int gsmStrength;
+    private final int battery;
     private final String params;
 
     @Override

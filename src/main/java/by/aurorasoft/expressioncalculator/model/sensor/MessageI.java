@@ -44,6 +44,9 @@ public interface MessageI {
     /** percents */
     int getGsmStrength();
 
+    /** percents */
+    int getBattery();
+
     /**
      * should get value from field for speed, latitude, longitude, amountSatellite, course, altitude
      *
