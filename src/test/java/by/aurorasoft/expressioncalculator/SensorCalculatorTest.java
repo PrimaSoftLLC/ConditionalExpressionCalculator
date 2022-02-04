@@ -112,7 +112,7 @@ public class SensorCalculatorTest {
 
         SensorI givenSensor = buildSensor(1L, "test", new Calibration(), "{#speed}", null, Map.of());
 
-        MessageI m2 = new MessageImpl(2L, Instant.parse("2020-01-20T10:00:00Z"), 0, 0, 0, 123, 0, 0, 0, 0, 0, "param1:100,param2:200,param3:300");
+        MessageI m2 = new MessageImpl(2L, Instant.parse("2020-01-20T10:00:00Z"), 0, 0, 0, 123, 0, 0, 0, 0, 0, 12.6F, "param1:100,param2:200,param3:300");
         Map<Long, SensorI> sensorMap = Map.of(givenSensor.getId(), givenSensor);
 
         assertEquals(123, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
@@ -123,7 +123,7 @@ public class SensorCalculatorTest {
 
         SensorI givenSensor = buildSensor(1L, "test", new Calibration(), "{#gpsOdometer}", null, Map.of());
 
-        MessageI m2 = new MessageImpl(2L, Instant.parse("2020-01-20T10:00:00Z"), 0, 0, 0, 123, 0, 0, 100.12345678D, 0, 0, "param1:100,param2:200,param3:300");
+        MessageI m2 = new MessageImpl(2L, Instant.parse("2020-01-20T10:00:00Z"), 0, 0, 0, 123, 0, 0, 100.12345678D, 0, 0, 12.6F,"param1:100,param2:200,param3:300");
         Map<Long, SensorI> sensorMap = Map.of(givenSensor.getId(), givenSensor);
 
         assertEquals(100.12345678D, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
@@ -134,7 +134,7 @@ public class SensorCalculatorTest {
 
         SensorI givenSensor = buildSensor(1L, "test", new Calibration(), "{#gpsOdometer}", null, Map.of());
 
-        MessageI m2 = new MessageImpl(2L, Instant.parse("2020-01-20T10:00:00Z"), 0, 0, 0, 123, 0, 0, Double.NaN, 0, 0, "param1:100,param2:200,param3:300");
+        MessageI m2 = new MessageImpl(2L, Instant.parse("2020-01-20T10:00:00Z"), 0, 0, 0, 123, 0, 0, Double.NaN, 0, 0, 12.6F, "param1:100,param2:200,param3:300");
         Map<Long, SensorI> sensorMap = Map.of(givenSensor.getId(), givenSensor);
 
         assertEquals(Double.NaN, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
@@ -145,7 +145,7 @@ public class SensorCalculatorTest {
 
         SensorI givenSensor = buildSensor(1L, "test", new Calibration(), "{#gsmStrength}", null, Map.of());
 
-        MessageI m2 = new MessageImpl(2L, Instant.parse("2020-01-20T10:00:00Z"), 0, 0, 0, 123, 0, 0, Double.NaN, 76, 0, "param1:100,param2:200,param3:300");
+        MessageI m2 = new MessageImpl(2L, Instant.parse("2020-01-20T10:00:00Z"), 0, 0, 0, 123, 0, 0, Double.NaN, 76, 0,  12.6F,"param1:100,param2:200,param3:300");
         Map<Long, SensorI> sensorMap = Map.of(givenSensor.getId(), givenSensor);
 
         assertEquals(76, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
@@ -156,10 +156,32 @@ public class SensorCalculatorTest {
 
         SensorI givenSensor = buildSensor(1L, "test", new Calibration(), "{#battery}", null, Map.of());
 
-        MessageI m2 = new MessageImpl(2L, Instant.parse("2020-01-20T10:00:00Z"), 0, 0, 0, 123, 0, 0, Double.NaN, 76, 45, "param1:100,param2:200,param3:300");
+        MessageI m2 = new MessageImpl(2L, Instant.parse("2020-01-20T10:00:00Z"), 0, 0, 0, 123, 0, 0, Double.NaN, 76, 45, 12.6F, "param1:100,param2:200,param3:300");
         Map<Long, SensorI> sensorMap = Map.of(givenSensor.getId(), givenSensor);
 
         assertEquals(45, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
+    }
+
+    @Test
+    public void calculateValueShouldReturnValueFromMessageParameterOnboardVoltage() {
+
+        SensorI givenSensor = buildSensor(1L, "test", new Calibration(), "{#onboardVoltage}", null, Map.of());
+
+        MessageI m2 = new MessageImpl(2L, Instant.parse("2020-01-20T10:00:00Z"), 0, 0, 0, 123, 0, 0, Double.NaN, 76, 45, 12.6F, "param1:100,param2:200,param3:300");
+        Map<Long, SensorI> sensorMap = Map.of(givenSensor.getId(), givenSensor);
+
+        assertEquals(12.6, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
+    }
+
+    @Test
+    public void calculateValueShouldReturnValueFromMessageParameterOnboardVoltageNaN() {
+
+        SensorI givenSensor = buildSensor(1L, "test", new Calibration(), "{#onboardVoltage}", null, Map.of());
+
+        MessageI m2 = new MessageImpl(2L, Instant.parse("2020-01-20T10:00:00Z"), 0, 0, 0, 123, 0, 0, Double.NaN, 76, 45, Float.NaN, "param1:100,param2:200,param3:300");
+        Map<Long, SensorI> sensorMap = Map.of(givenSensor.getId(), givenSensor);
+
+        assertEquals(Float.NaN, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
     }
 
     @Test
@@ -167,7 +189,7 @@ public class SensorCalculatorTest {
 
         SensorI givenSensor = buildSensor(1L, "test", new Calibration(), "{#unknown}", null, Map.of());
 
-        MessageI m2 = new MessageImpl(2L, Instant.parse("2020-01-20T10:00:00Z"), 0, 0, 0, 123, 0, 0, 0, 0, 0, "param1:100,param2:200,param3:300");
+        MessageI m2 = new MessageImpl(2L, Instant.parse("2020-01-20T10:00:00Z"), 0, 0, 0, 123, 0, 0, 0, 0, 0, 12.6F, "param1:100,param2:200,param3:300");
         Map<Long, SensorI> sensorMap = Map.of(givenSensor.getId(), givenSensor);
 
         assertEquals(0, SensorCalculator.calculateValue(givenSensor, m2, sensorMap), 0);
@@ -327,6 +349,6 @@ public class SensorCalculatorTest {
     }
 
     private MessageI buildMessage(Long id, String params) {
-        return new MessageImpl(id, Instant.parse("2020-01-20T10:00:00Z"), 0, 0, 0, 0, 0, 0, 0, 0, 0, params);
+        return new MessageImpl(id, Instant.parse("2020-01-20T10:00:00Z"), 0, 0, 0, 0, 0, 0, 0, 0, 0, 12.6F, params);
     }
 }

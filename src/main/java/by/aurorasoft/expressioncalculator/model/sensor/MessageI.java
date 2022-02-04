@@ -47,6 +47,9 @@ public interface MessageI {
     /** percents */
     int getBattery();
 
+    /** volts */
+    float getOnboardVoltage();
+
     /**
      * should get value from field for speed, latitude, longitude, amountSatellite, course, altitude
      *

@@ -22,6 +22,7 @@ public class MessageImpl implements MessageI {
     private final double gpsOdometer;
     private final int gsmStrength;
     private final int battery;
+    private final float onboardVoltage;
     private final String params;
 
     @Override
