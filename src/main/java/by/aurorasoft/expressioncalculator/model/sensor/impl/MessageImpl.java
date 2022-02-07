@@ -23,6 +23,11 @@ public class MessageImpl implements MessageI {
     private final int gsmStrength;
     private final int battery;
     private final float onboardVoltage;
+    private final float ecoAcceleration;
+    private final float ecoBraking;
+    private final float ecoCornering;
+    private final float ecoBump;
+
     private final String params;
 
     @Override
