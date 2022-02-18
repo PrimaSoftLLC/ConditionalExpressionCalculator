@@ -47,6 +47,9 @@ public interface MessageI {
     /** percents */
     int getBattery();
 
+    /** mV */
+    int getBatteryVoltage();
+
     /** volts */
     float getOnboardVoltage();
 

@@ -15,7 +15,7 @@ public abstract class SupportedOperations {
     public static final char MESSAGE_PARAMETER_TOKEN = '@';
 
     public static final Set<String> AVAILABLE_PARAMS = Set.of("latitude", "longitude", "altitude", "speed",
-            "amountSatellite", "course", "gpsOdometer", "gsmStrength", "battery", "onboardVoltage",
+            "amountSatellite", "course", "gpsOdometer", "gsmStrength", "battery", "batteryVoltage", "onboardVoltage",
             "ecoAcceleration", "ecoBraking", "ecoCornering", "ecoBump");
 
     public static final char START_SENSOR_ID_TOKEN = '{';
