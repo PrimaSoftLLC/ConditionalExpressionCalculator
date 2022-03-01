@@ -53,6 +53,14 @@ public interface MessageI {
     /** volts */
     float getOnboardVoltage();
 
+    float getEcoAcceleration();
+
+    float getEcoBraking();
+
+    float getEcoCornering();
+
+    float getEcoBump();
+
     /**
      * should get value from field for speed, latitude, longitude, amountSatellite, course, altitude
      *
