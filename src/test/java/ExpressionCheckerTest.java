@@ -148,7 +148,7 @@ public class ExpressionCheckerTest {
 
     @Test
     public void checkSpaces() {
-        assertEquals("{s}+10", checker.checkMath("{s}   + 10"));
+        assertEquals("{s}+10", checker.checkMath("{s}  + 10"));
         assertEquals("{s}+10", checker.checkMath(" {s}   + 10 "));
         assertEquals("{s}+10", checker.checkMath("  {s}   + 10  "));
         assertEquals("{sensor one}+10+3+{sensor one rpm }", checker.checkMath("{sensor one}   + 10 + 3 + {sensor one rpm }"));
