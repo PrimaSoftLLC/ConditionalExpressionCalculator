@@ -1,5 +1,6 @@
 import by.aurorasoft.expressioncalculator.ExpressionCalculator;
 import by.aurorasoft.expressioncalculator.ReversePolishNotation;
+import by.aurorasoft.expressioncalculator.model.EToken;
 import org.junit.Test;
 
 import java.util.List;
@@ -57,16 +58,17 @@ public class ExpressionCalculatorTest {
 
     @Test
     public void calculateLogic() {
+        assertTrue(calculator.calculateConditional(ReversePolishNotation.create("11>0&100<120&50<120", List.of())));
         assertTrue(calculator.calculateConditional(ReversePolishNotation.create("10>0&100<120", List.of())));
         assertTrue(calculator.calculateConditional(ReversePolishNotation.create("10+1>0&100+1<120", List.of())));
         assertFalse(calculator.calculateConditional(ReversePolishNotation.create("10+1>0&100+100<120", List.of())));
-        assertFalse(calculator.calculateConditional(ReversePolishNotation.create("10>0&&100<1", List.of())));
+        assertFalse(calculator.calculateConditional(ReversePolishNotation.create("10>0&100<1", List.of())));
         assertTrue(calculator.calculateConditional(ReversePolishNotation.create("10>0|100<120", List.of())));
         assertTrue(calculator.calculateConditional(ReversePolishNotation.create("10>0|100<120/2", List.of())));
         assertTrue(calculator.calculateConditional(ReversePolishNotation.create("10>0|100<120|150>120", List.of())));
         assertTrue(calculator.calculateConditional(ReversePolishNotation.create("10>50|100<120|150>120", List.of())));
         assertTrue(calculator.calculateConditional(ReversePolishNotation.create("10>50|200<120|150>120", List.of())));
-        assertFalse(calculator.calculateConditional(ReversePolishNotation.create("10<50|200<120|200<120", List.of())));
+        assertTrue(calculator.calculateConditional(ReversePolishNotation.create("10<50|200<120|200<120", List.of())));
         assertFalse(calculator.calculateConditional(ReversePolishNotation.create("10<0|100>120|100>120", List.of())));
         assertFalse(calculator.calculateConditional(ReversePolishNotation.create("10<0|(100>120&100>120)", List.of())));
         assertTrue(calculator.calculateConditional(ReversePolishNotation.create("10<100|(100>120&100<120)", List.of())));
@@ -76,5 +78,13 @@ public class ExpressionCalculatorTest {
     @Test
     public void calculateLogic2() {
         assertFalse(calculator.calculateConditional(ReversePolishNotation.create("50<10|200<120|220<140", List.of())));
+    }
+
+    @Test
+    public void calculateLogic254435() {
+        assertTrue(calculator.calculateConditional(ReversePolishNotation.create("10<50|200<120", List.of())));
+        assertTrue(calculator.calculateConditional(ReversePolishNotation.create("10<50|200<120|200<120", List.of())));
+        assertTrue(calculator.calculateConditional(ReversePolishNotation.create("10>50|200>120|200<120", List.of())));
+        assertTrue(calculator.calculateConditional(ReversePolishNotation.create("10>50|200<120|200>120", List.of())));
     }
 }

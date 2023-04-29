@@ -36,8 +36,6 @@ public class ExpressionCalculator {
      * @return boolean as a result
      */
     public static boolean calculateConditional(List<EToken> tokens) {
-        Boolean result = null;
-        Boolean tempResult = null;
         int i = 0;
         final double[] stack = new double[tokens.size()];
         for (EToken t : tokens) {
@@ -54,19 +52,19 @@ public class ExpressionCalculator {
             if (SupportedOperations.isCondition(t.getType())) {
                 double b = stack[i-- - 1];
                 double a = stack[i-- - 1];
-                result = tempResult;
-                tempResult = SupportedOperations.doCondition(a, b, t.getType());
+                boolean tempResult = SupportedOperations.doCondition(a, b, t.getType());
+                stack[i++] = tempResult ? Integer.MAX_VALUE : Integer.MIN_VALUE;
                 continue;
             }
             if (SupportedOperations.isLogic(t.getType())) {
-                if (result == null) {
-                    result = tempResult;
-                }
-                result = SupportedOperations.doLogic(result, tempResult, t.getType());
+                boolean b = stack[i-- - 1] == Integer.MAX_VALUE;
+                boolean a = stack[i-- - 1] == Integer.MAX_VALUE;
+                boolean tempResult = SupportedOperations.doLogic(a, b, t.getType());
+                stack[i++] = tempResult ? Integer.MAX_VALUE : Integer.MIN_VALUE;
                 continue;
             }
             throw new IllegalArgumentException(String.format("Illegal token: '%s'", t.getType().detail));
         }
-        return result != null ? result : tempResult != null? tempResult: true;
+        return stack[0] == Integer.MAX_VALUE;
     }
 }

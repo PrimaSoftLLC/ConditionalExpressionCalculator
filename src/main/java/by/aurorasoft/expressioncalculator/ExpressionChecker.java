@@ -30,8 +30,8 @@ public class ExpressionChecker {
     }
 
     /**
-     * @throws IllegalArgumentException if {@param raw} is not valid mathematical expression
      * @return return corrected expression
+     * @throws IllegalArgumentException if {@param raw} is not valid mathematical expression
      */
     public String checkMath(String raw) {
         if (raw == null) {
@@ -109,8 +109,8 @@ public class ExpressionChecker {
     }
 
     /**
-     * @throws IllegalArgumentException if {@param raw} is not valid logic expression
      * @return return corrected expression
+     * @throws IllegalArgumentException if {@param raw} is not valid logic expression
      */
     public String checkLogic(String raw) {
         if (raw == null) {
@@ -182,13 +182,27 @@ public class ExpressionChecker {
     private void conditionalCheck(String raw, List<SensorI> rawTokens) {
         List<EToken> tokens = ReversePolishNotation.create(raw, rawTokens);
         EToken prev = ETokens.create(")");
+        int logicCount = 0;
+        int conditionalCount = 0;
         for (EToken t : tokens) {
             if ((SupportedOperations.isCondition(prev.getType()) || SupportedOperations.isLogic(prev.getType())) && SupportedOperations.isMath(t.getType())) {
                 throw new IllegalArgumentException(String.format("Illegal logic expression - result is not boolean. " +
                         "Wrong use operands '%s' and '%s'", prev, t));
             }
             prev = t;
+
+            if (SupportedOperations.isLogic(t.getType())) {
+                logicCount++;
+            }
+            if (SupportedOperations.isCondition(t.getType())) {
+                conditionalCount++;
+            }
         }
+
+        if (conditionalCount - 1 != logicCount) {
+            throw new IllegalArgumentException("Wrong count of logic and conditional operators");
+        }
+
         if (!SupportedOperations.isLogic(tokens.get(tokens.size() - 1).getType()) && !SupportedOperations.isCondition(tokens.get(tokens.size() - 1).getType())) {
             throw new IllegalArgumentException(
                     String.format("Illegal logic expression - result is not boolean. Wrong use operand '%s'",
