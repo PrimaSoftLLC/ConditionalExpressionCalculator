@@ -56,11 +56,15 @@ class ReleaseTests(unittest.TestCase):
 
     def test_cli_blocks_unreleased_changelog_before_network(self):
         root = Path(__file__).resolve().parents[3]
-        result = subprocess.run([sys.executable, str(root / '.github/scripts/release_checks.py'),
-                                 'preflight', '--pom', str(root / 'pom.xml'),
-                                 '--changelog', str(root / 'CHANGELOG.md')],
-                                capture_output=True, text=True,
-                                env={**os.environ, 'GITHUB_TOKEN': 'SECRET'})
+        with TemporaryDirectory() as tmp:
+            pom = Path(tmp) / 'pom.xml'
+            changelog = Path(tmp) / 'CHANGELOG.md'
+            pom.write_text('<project><groupId>by.aurorasoft</groupId><artifactId>conditional-expression-calculator</artifactId><version>7.5</version></project>')
+            changelog.write_text('## Не выпущено\n- Pending release\n', encoding='utf-8')
+            result = subprocess.run([sys.executable, str(root / '.github/scripts/release_checks.py'),
+                                     'preflight', '--pom', str(pom), '--changelog', str(changelog)],
+                                    capture_output=True, text=True,
+                                    env={**os.environ, 'GITHUB_TOKEN': 'SECRET'})
         self.assertEqual(1, result.returncode)
         self.assertIn('changelog', result.stdout)
         self.assertNotIn('SECRET', result.stdout + result.stderr)

@@ -91,20 +91,34 @@
                 <version>3.1.4</version>
             </plugin>
             <plugin>
-                <groupId>io.github.git-commit-id</groupId>
-                <artifactId>git-commit-id-maven-plugin</artifactId>
-                <version>9.0.2</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.5.0</version>
                 <configuration>
-                    <generateGitPropertiesFile>false</generateGitPropertiesFile>
+                    <executable>git</executable>
+                    <arguments>
+                        <argument>-C</argument><argument>${project.basedir}</argument>
+                        <argument>log</argument><argument>-1</argument>
+                        <argument>--format=build.revision=%H</argument>
+                    </arguments>
+                    <outputFile>${project.build.directory}/git-revision.properties</outputFile>
                 </configuration>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>revision</goal>
+                            <goal>exec</goal>
                         </goals>
                         <phase>initialize</phase>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions><execution><phase>initialize</phase><goals><goal>read-project-properties</goal></goals>
+                    <configuration><files><file>${project.build.directory}/git-revision.properties</file></files></configuration>
+                </execution></executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -112,7 +126,7 @@
                 <version>3.4.2</version>
                 <configuration><archive><manifestEntries>
                     <Implementation-Version>${project.version}</Implementation-Version>
-                    <Build-Revision>${git.commit.id}</Build-Revision>
+                    <Build-Revision>${build.revision}</Build-Revision>
                 </manifestEntries></archive></configuration>
             </plugin>
         </plugins>
