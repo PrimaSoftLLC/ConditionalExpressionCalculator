@@ -1,3 +1,6 @@
 # Project exclude paths
 /target/
 /benchmarks/target/
+/.worktrees/
+/.superpowers/
+__pycache__/
