@@ -19,7 +19,9 @@ public enum EType {
     PROPERTY("property"),
     PARAMETER("parameter"),
     OPEN_B("("), CLOSE_B(")"),
-    BIT("bit"), COMMA(",");
+    BIT("bit"), COMMA(","),
+    BIT_AND("bit_and"), BIT_OR("bit_or"), BIT_XOR("bit_xor"), BIT_NOT("bit_not"),
+    BIT_SHL("bit_shl"), BIT_SHR("bit_shr"), BIT_USHR("bit_ushr");
 
     public final String detail;
 

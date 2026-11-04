@@ -137,7 +137,7 @@ public class ExpressionChecker {
         boolean hasFunctionSyntax = false;
         while (iterator.hasNext()) {
             EToken token = iterator.nextEToken();
-            hasFunctionSyntax |= token.is(EType.BIT) || token.is(EType.COMMA);
+            hasFunctionSyntax |= SupportedOperations.isFunction(token.getType()) || token.is(EType.COMMA);
         }
         if (!hasFunctionSyntax) {
             return false;
@@ -158,10 +158,14 @@ public class ExpressionChecker {
                 continue;
             }
             Double right = values[--size];
+            if (SupportedOperations.arity(token.getType()) == 1) {
+                values[size++] = right != null ? SupportedOperations.calculate(right, token.getType()) : null;
+                continue;
+            }
             Double left = values[--size];
-            if (token.is(EType.BIT)) {
-                if (left != null) SupportedOperations.checkBitNumber(left);
-                if (right != null) SupportedOperations.checkBitIndex(right);
+            if (SupportedOperations.isFunction(token.getType())) {
+                if (left != null) SupportedOperations.checkFunctionArgument(left, token.getType(), 0);
+                if (right != null) SupportedOperations.checkFunctionArgument(right, token.getType(), 1);
             }
             values[size++] = left != null && right != null && SupportedOperations.isMath(token.getType())
                     ? SupportedOperations.calculate(left, right, token.getType()) : null;

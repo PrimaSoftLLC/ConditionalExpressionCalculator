@@ -64,20 +64,19 @@ final class FunctionExpressionParser {
             expect(EType.CLOSE_B);
             return numeric;
         }
-        if (token.is(EType.BIT)) {
+        if (SupportedOperations.isFunction(token.getType())) {
             expect(EType.OPEN_B);
-            if (!expression(1)) {
-                throw error("bit number must be numeric");
-            }
-            expect(EType.COMMA);
-            if (!expression(1)) {
-                throw error("bit index must be numeric");
+            for (int argument = 0; argument < SupportedOperations.arity(token.getType()); argument++) {
+                if (argument > 0) expect(EType.COMMA);
+                if (!expression(1)) {
+                    throw error(token.getType().detail + " arguments must be numeric");
+                }
             }
             expect(EType.CLOSE_B);
             output.add(token);
             return true;
         }
-        throw error("Expected a number, reference, parenthesis or bit call");
+        throw error("Expected a number, reference, parenthesis or function call");
     }
 
     private void expect(EType type) {

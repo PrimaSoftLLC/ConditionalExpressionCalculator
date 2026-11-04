@@ -49,3 +49,16 @@
 - [x] Review the complete change and resolve functional findings with regression tests.
 
 Verification: 163 tests, zero failures/errors, one preexisting skip. Independent review found no functional defects; clarified the existing SensorCalculator syntax-error fallback in README.
+
+### Follow-up: basic bitwise functions
+
+Approved in conversation: `bit_and`, `bit_or`, `bit_xor`, `bit_not`, `bit_shl`,
+`bit_shr`, `bit_ushr`; keep the implementation simple in the existing classes.
+All numbers/results are integral and within inclusive ±2^53, shift counts 0–63.
+Use Java long operations; check the long result before converting to double.
+
+- [x] Add BitwiseFunctionsTest and sensor integration tests; observe unsupported-function failures.
+- [x] Share function arities, handle unary NOT in parsing/checking/evaluation, implement checked long operations.
+- [x] Run full suite: 174 tests, no failures/errors, one preexisting skip.
+- [x] Document names, limits, nesting and 64-bit shift behavior.
+- [x] Run clean verify and review the final diff: 174 tests, zero failures/errors, one preexisting skip; independent review found no actionable issues.

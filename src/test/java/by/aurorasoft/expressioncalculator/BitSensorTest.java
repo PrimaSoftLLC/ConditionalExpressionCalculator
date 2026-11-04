@@ -18,6 +18,19 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.*;
 
 public class BitSensorTest {
+    @Test public void combinesBitwiseFunctionsInSensorFormulaAndCondition() {
+        SensorImpl sensor = sensor(1, "flags", "bit_or(bit_and({@flags},255),bit_shl(1,{@index}))",
+                "bit_shr({x},3)>0&bit_not({@flags})=0");
+        Map<Long, SensorImpl> sensors = Map.of(1L, sensor);
+        for (boolean prepared : new boolean[]{false, true}) {
+            if (prepared) SensorCalculator.prepare(sensors);
+            assertEquals(255, SensorCalculator.calculateValue(sensor, message("flags:-1,index:3"), sensors), 0);
+            assertTrue(Double.isNaN(SensorCalculator.calculateValue(sensor, message("flags:8,index:3"), sensors)));
+            assertThrows(IllegalArgumentException.class,
+                    () -> SensorCalculator.calculateValue(sensor, message("flags:-1,index:54"), sensors));
+        }
+    }
+
     @Test public void usesSignedByteTelemetryInFormulaAndCondition() {
         SensorImpl sensor = sensor(1, "flags", "10*bit({@flags},3)", "bit({@flags},8)=1&{x}=10");
         Map<Long, SensorImpl> sensors = Map.of(1L, sensor);

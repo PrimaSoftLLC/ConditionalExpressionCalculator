@@ -26,7 +26,9 @@ public class ETokens {
         cache.put(")", EToken.operation(EType.CLOSE_B));
         cache.put("&", EToken.operation(EType.AND));
         cache.put("|", EToken.operation(EType.OR));
-        cache.put("bit", EToken.operation(EType.BIT));
+        for (EType function : SupportedOperations.FUNCTION_ARITIES.keySet()) {
+            cache.put(function.detail, EToken.operation(function));
+        }
         cache.put(",", EToken.operation(EType.COMMA));
     }
 

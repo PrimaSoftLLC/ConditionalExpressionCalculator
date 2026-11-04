@@ -8,7 +8,7 @@ import java.util.Set;
 
 public abstract class SupportedOperations {
 
-    private static final double MAX_EXACT_INTEGER = 0x1.0p53;
+    private static final long MAX_EXACT_INTEGER = 1L << 53;
 
     public static final String MESSAGE_PARAMS_KEY_VALUE_SEPARATOR = ":";
 
@@ -25,7 +25,13 @@ public abstract class SupportedOperations {
 
     public static final Set<EType> NUMBERABLE_TYPES = Set.of(EType.SENSOR_ID, EType.NUMB, EType.PROPERTY, EType.PARAMETER);
 
-    public static final Set<EType> MATH_TYPES = Set.of(EType.MULT, EType.DIV, EType.PLUS, EType.MINUS, EType.BIT);
+    public static final Map<EType, Integer> FUNCTION_ARITIES = Map.of(
+            EType.BIT, 2, EType.BIT_AND, 2, EType.BIT_OR, 2, EType.BIT_XOR, 2,
+            EType.BIT_NOT, 1, EType.BIT_SHL, 2, EType.BIT_SHR, 2, EType.BIT_USHR, 2);
+
+    public static final Set<EType> MATH_TYPES = Set.of(EType.MULT, EType.DIV, EType.PLUS, EType.MINUS,
+            EType.BIT, EType.BIT_AND, EType.BIT_OR, EType.BIT_XOR, EType.BIT_NOT,
+            EType.BIT_SHL, EType.BIT_SHR, EType.BIT_USHR);
 
     public static final Set<EType> CONDITIONALS_TYPES = Set.of(EType.MORE, EType.MORE_E, EType.LESS, EType.LESS_E, EType.EQUAL, EType.NOT_E);
 
@@ -71,18 +77,65 @@ public abstract class SupportedOperations {
         return MATH_TYPES.contains(operation);
     }
 
+    static boolean isFunction(EType operation) {
+        return FUNCTION_ARITIES.containsKey(operation);
+    }
+
+    static int arity(EType operation) {
+        return FUNCTION_ARITIES.getOrDefault(operation, 2);
+    }
+
     public static double calculate(double a, double b, EType operand){
+        if (isFunction(operand)) {
+            checkFunctionArgument(a, operand, 0);
+            checkFunctionArgument(b, operand, 1);
+            long left = (long) a;
+            long right = (long) b;
+            long result;
+            switch (operand) {
+                case BIT: result = (left >>> (int) b) & 1L; break;
+                case BIT_AND: result = left & right; break;
+                case BIT_OR: result = left | right; break;
+                case BIT_XOR: result = left ^ right; break;
+                case BIT_SHL: result = left << (int) b; break;
+                case BIT_SHR: result = left >> (int) b; break;
+                case BIT_USHR: result = left >>> (int) b; break;
+                default: throw new UnsupportedOperationException("Not a binary function: " + operand);
+            }
+            return checkedBitResult(result);
+        }
         switch (operand){
             case PLUS: return a + b;
             case MINUS: return a - b;
             case MULT: return a * b;
             case DIV: return a / b;
-            case BIT:
-                checkBitNumber(a);
-                checkBitIndex(b);
-                return ((long) a >>> (int) b) & 1L;
             default: throw new UnsupportedOperationException(String.format("operand: %s is not supported", operand));
         }
+    }
+
+    public static double calculate(double value, EType operand) {
+        if (operand != EType.BIT_NOT) {
+            throw new UnsupportedOperationException("Not a unary function: " + operand);
+        }
+        checkBitNumber(value);
+        return checkedBitResult(~(long) value);
+    }
+
+    static void checkFunctionArgument(double value, EType function, int index) {
+        if (index == 1 && (function == EType.BIT || function == EType.BIT_SHL
+                || function == EType.BIT_SHR || function == EType.BIT_USHR)) {
+            checkBitIndex(value);
+        } else {
+            checkBitNumber(value);
+        }
+    }
+
+    private static double checkedBitResult(long result) {
+        // Check the long before conversion: e.g. -(2^53 + 1) rounds to -2^53 as double.
+        if (result < -MAX_EXACT_INTEGER || result > MAX_EXACT_INTEGER) {
+            throw new IllegalArgumentException("Bitwise result must be in [-2^53, 2^53]: " + result);
+        }
+        return result;
     }
 
     static void checkBitNumber(double value) {

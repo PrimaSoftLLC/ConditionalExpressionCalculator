@@ -40,9 +40,13 @@ public class ExpressionCalculator {
             if (SupportedOperations.NUMBERABLE_TYPES.contains(t.getType())) {
                 stack[i++] = operand(t, resolver, message, value, sensors);
             } else {
-                double b = stack[i-- - 1];
-                double a = stack[i-- - 1];
-                stack[i++] = SupportedOperations.calculate(a, b, t.getType());
+                double b = stack[--i];
+                if (SupportedOperations.arity(t.getType()) == 1) {
+                    stack[i++] = SupportedOperations.calculate(b, t.getType());
+                } else {
+                    double a = stack[--i];
+                    stack[i++] = SupportedOperations.calculate(a, b, t.getType());
+                }
             }
         }
         return stack[i - 1];
@@ -75,9 +79,13 @@ public class ExpressionCalculator {
                 continue;
             }
             if (SupportedOperations.isMath(t.getType())) {
-                double b = stack[i-- - 1];
-                double a = stack[i-- - 1];
-                stack[i++] = SupportedOperations.calculate(a, b, t.getType());
+                double b = stack[--i];
+                if (SupportedOperations.arity(t.getType()) == 1) {
+                    stack[i++] = SupportedOperations.calculate(b, t.getType());
+                } else {
+                    double a = stack[--i];
+                    stack[i++] = SupportedOperations.calculate(a, b, t.getType());
+                }
                 continue;
             }
             if (SupportedOperations.isCondition(t.getType())) {

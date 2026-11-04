@@ -14,7 +14,7 @@ public class ReversePolishNotation {
         while (iterator.hasNext()) {
             EToken token = iterator.nextEToken();
             input.add(token);
-            hasFunctionSyntax |= token.is(EType.BIT) || token.is(EType.COMMA);
+            hasFunctionSyntax |= SupportedOperations.isFunction(token.getType()) || token.is(EType.COMMA);
         }
         if (hasFunctionSyntax) {
             return new FunctionExpressionParser(input).parse();
