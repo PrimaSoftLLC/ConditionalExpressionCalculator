@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": ["Bash(mise exec -- mvn:*)", "Bash(./mvnw:*)", "Bash(git status:*)", "Bash(git log:*)", "Bash(git diff:*)"],
+    "deny": ["Bash(docker push:*)", "Bash(mvn deploy:*)"]
+  },
+  "hooks": {
+    "PreToolUse": [{"matcher": "Bash", "hooks": [{"type": "command", "shell": "bash", "command": "bash .Codex/hooks/guard-bash.sh", "timeout": 10}]}]
+  }
+}

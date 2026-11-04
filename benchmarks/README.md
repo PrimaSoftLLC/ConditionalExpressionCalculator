@@ -1,5 +1,25 @@
 # Измерения калькулятора
 
+## Текущая сборка
+
+Из корня репозитория, после mise trust/install:
+
+```powershell
+mise exec -- mvn -B install
+$calculatorVersion = mise exec -- mvn -q help:evaluate '-Dexpression=project.version' -DforceStdout
+mise exec -- mvn -B -f benchmarks/pom.xml package "-Dcalculator.version=$calculatorVersion"
+mise exec -- java -jar benchmarks/target/benchmarks.jar -l
+```
+
+По умолчанию используются by.aurorasoft:conditional-expression-calculator.
+Версию необходимо передать явно из установленного корневого POM.
+Для исторических измерений ниже к каждой Maven-команде добавить
+`'-Dcalculator.groupId=com.github.PrimaSoftLLC' '-Dcalculator.artifactId=ConditionalExpressionCalculator'`.
+Это исключает случайную замену baseline текущей библиотекой. Локальные SNAPSHOT
+для измерений не публикуются в GitHub Packages.
+
+## Исторические измерения
+
 JMH 1.37 находится в отдельном Maven-проекте и не входит в runtime-зависимости
 библиотеки. Сравниваются исходный commit 7b3b0ba (тег 7.4) и исправленный код.
 Координаты локальной установки: com.github.PrimaSoftLLC:ConditionalExpressionCalculator,
