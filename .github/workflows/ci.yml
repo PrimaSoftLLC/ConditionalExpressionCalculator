@@ -1,0 +1,88 @@
+name: CI
+on:
+  pull_request:
+    branches: [develop, master]
+  push:
+    branches: [develop, master]
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+      - run: python3 -m unittest discover -s .github/scripts/tests -v
+      - run: ./mvnw -B verify
+  release:
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      packages: write
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+          server-id: github-conditional-expression-calculator
+      - name: Release preflight
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          python3 .github/scripts/release_checks.py preflight --pom pom.xml --changelog CHANGELOG.md
+          version=$(./mvnw -q help:evaluate -Dexpression=project.version -DforceStdout)
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+      - name: Verify exact release candidate
+        run: |
+          ./mvnw -B clean verify
+          mkdir -p "$RUNNER_TEMP/candidate"
+          cp pom.xml "$RUNNER_TEMP/candidate/pom.xml"
+          cp "target/conditional-expression-calculator-$VERSION.jar" "$RUNNER_TEMP/candidate/artifact.jar"
+          echo 'Verified candidate' >> "$GITHUB_STEP_SUMMARY"
+      - name: Publish
+        run: |
+          ./mvnw -B deploy -DskipTests
+          cmp pom.xml "$RUNNER_TEMP/candidate/pom.xml"
+          cmp "target/conditional-expression-calculator-$VERSION.jar" "$RUNNER_TEMP/candidate/artifact.jar"
+          echo 'Published candidate; download verification pending' >> "$GITHUB_STEP_SUMMARY"
+      - name: Download into clean Maven repository
+        run: |
+          cache="$RUNNER_TEMP/package-check"
+          mkdir -p "$cache"
+          repo='github-conditional-expression-calculator::default::https://maven.pkg.github.com/primasoftllc/conditionalexpressioncalculator'
+          for extension in jar pom; do
+            ./mvnw -B "-Dmaven.repo.local=$cache" org.apache.maven.plugins:maven-dependency-plugin:3.8.1:get \
+              "-Dartifact=by.aurorasoft:conditional-expression-calculator:$VERSION:$extension" \
+              "-DremoteRepositories=$repo" -Dtransitive=false
+          done
+          base="$cache/by/aurorasoft/conditional-expression-calculator/$VERSION/conditional-expression-calculator-$VERSION"
+          python3 .github/scripts/release_checks.py verify-download \
+            --local-pom "$RUNNER_TEMP/candidate/pom.xml" --local-jar "$RUNNER_TEMP/candidate/artifact.jar" \
+            --fetched-pom "$base.pom" --fetched-jar "$base.jar"
+      - name: Tag verified release
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git tag -a "v$VERSION" "$GITHUB_SHA" -m "Release $VERSION"
+          git push origin "refs/tags/v$VERSION"
+          echo "Released by.aurorasoft:conditional-expression-calculator:$VERSION at $GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
+      - name: Failure summary
+        if: failure()
+        run: |
+          echo "Release failed at commit $GITHUB_SHA. Check the last successful step. Packages may be partially published: do not retry deploy blindly or delete existing versions." >> "$GITHUB_STEP_SUMMARY"
