@@ -23,7 +23,8 @@ public class EToken {
     private final long sensorId;
 
     /**
-     * contains value. This value set before calculations in
+     * Literal or legacy assigned value. SensorCalculator resolves dynamic values
+     * without modifying this field. Do not mutate shared tokens during calculation.
      * @see by.aurorasoft.expressioncalculator.ExpressionCalculator}
      */
     private double value;

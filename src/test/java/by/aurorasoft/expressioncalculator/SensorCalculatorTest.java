@@ -391,6 +391,7 @@ public class SensorCalculatorTest {
         MessageI m2 = buildMessage(2L, "5:0,21:4,240:1,119:1,120:1,141:0,66:13008,67:4334,9:12807,24:0,125:423,_odv:3418469.60");
         Map<Long, SensorI> sensorMap = Map.of(givenSensor.getId(), givenSensor);
 
+        SensorCalculator.prepare(sensorMap);
         long start = System.currentTimeMillis();
         for (int i = 0; i < 1000000; i++) {
             SensorCalculator.calculateValue(givenSensor, m2, sensorMap);

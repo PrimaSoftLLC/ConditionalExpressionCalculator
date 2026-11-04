@@ -16,6 +16,18 @@ import java.util.Map;
 public class SensorCalculator {
 
     /**
+     * Compile a complete snapshot before publishing it to worker threads.
+     * Configuration and tokens must remain unchanged during calculation. Calls without
+     * preparation compile locally and do not cache expressions in the sensor.
+     */
+    public static void prepare(Map<Long, ? extends SensorI> sensorMap) {
+        for (SensorI sensor : sensorMap.values()) {
+            buildFormula(sensor, sensorMap);
+            buildCondition(sensor, sensorMap);
+        }
+    }
+
+    /**
      * calculate value and apply condition
      */
     public static double calculateValue(SensorI sensor, MessageI m, Map<Long, ? extends SensorI> sensorMap) {
@@ -30,11 +42,10 @@ public class SensorCalculator {
      * calculate value without applying condition
      */
     public static double calculateWithoutCondition(SensorI sensor, MessageI m, Map<Long, ? extends SensorI> sensorMap) {
-        buildFormula(sensor, sensorMap);
+        List<EToken> tokens = expression(sensor.getFormulaRaw(), sensor.getFormula(), sensor, sensorMap, "formula");
         double v = 0;
-        if (sensor.getFormulaRaw() != null && sensor.getFormula().size() > 0) {
-            replaceTokens(sensorMap, sensor.getFormula(), v, m);
-            v = convertCalibration(sensor, ExpressionCalculator.calculateMath(sensor.getFormula()));
+        if (sensor.getFormulaRaw() != null && !tokens.isEmpty()) {
+            v = convertCalibration(sensor, ExpressionCalculator.calculateMath(tokens, t -> resolveValue(t, m, 0, sensorMap)));
         } else {
             v = convertCalibration(sensor, v);
         }
@@ -45,10 +56,9 @@ public class SensorCalculator {
      * apply condition from this object {@prop condition}
      */
     public static boolean applyCondition(SensorI sensor, MessageI m, double v, Map<Long, ? extends SensorI> sensorMap) {
-        buildCondition(sensor, sensorMap);
-        if (sensor.getConditionRaw() != null && sensor.getCondition().size() > 0) {
-            replaceTokens(sensorMap, sensor.getCondition(), v, m);
-            return ExpressionCalculator.calculateConditional(sensor.getCondition());
+        List<EToken> tokens = expression(sensor.getConditionRaw(), sensor.getCondition(), sensor, sensorMap, "condition");
+        if (sensor.getConditionRaw() != null && !tokens.isEmpty()) {
+            return ExpressionCalculator.calculateConditional(tokens, t -> resolveValue(t, m, v, sensorMap));
         }
         return true;
     }
@@ -61,8 +71,7 @@ public class SensorCalculator {
             return true;
         }
         double value = calculateValue(sensor, m, sensorMap);
-        replaceTokens(sensorMap, c, value, m);
-        return ExpressionCalculator.calculateConditional(c);
+        return ExpressionCalculator.calculateConditional(c, t -> resolveValue(t, m, value, sensorMap));
     }
 
     /**
@@ -82,29 +91,30 @@ public class SensorCalculator {
     /**
      * prepare {@param tokens} to calculate into {@link ExpressionCalculator}
      */
-    private static void replaceTokens(Map<Long, ? extends SensorI> sensorMap, List<EToken> tokens, double value, MessageI m) {
-        for (EToken t : tokens) {
-            if (t.is(EType.PROPERTY)) {
-                t.setValue(m.getPropertyValue(t.getPropertyName()));
-            }
-            if (t.is(EType.PARAMETER)) {
-                t.setValue(m.getParameterValue(t.getParameterName()));
-            }
-            if (t.is(EType.SENSOR_ID)) {
-                if (t.getSensorId() == 0) {
-                    t.setValue(value);
-                } else {
-                    SensorI s = sensorMap.get(t.getSensorId());
-                    t.setValue(s.calculateValue(m, sensorMap));
-                }
-            }
+    private static double resolveValue(EToken t, MessageI m, double value, Map<Long, ? extends SensorI> sensorMap) {
+        if (t.is(EType.PROPERTY)) return m.getPropertyValue(t.getPropertyName());
+        if (t.is(EType.PARAMETER)) return m.getParameterValue(t.getParameterName());
+        if (t.is(EType.SENSOR_ID)) return t.getSensorId() == 0 ? value
+                : sensorMap.get(t.getSensorId()).calculateValue(m, sensorMap);
+        return t.getValue();
+    }
+
+    private static List<EToken> expression(String raw, List<EToken> prepared, SensorI sensor,
+                                          Map<Long, ? extends SensorI> map, String kind) {
+        if (prepared != null) return prepared;
+        if (raw == null) return List.of();
+        try {
+            return List.copyOf(ReversePolishNotation.create(raw, map.values()));
+        } catch (Exception e) {
+            log.error("Sensor: '{}' {}: '{}' can not be build. Message: '{}'", sensor.getId(), kind, raw, e.getMessage());
+            return List.of();
         }
     }
 
     public static List<EToken> buildCondition(SensorI sensor, Map<Long, ? extends SensorI> sensorMap) {
         try {
             if (sensor.getConditionRaw() != null && sensor.getCondition() == null) {
-                sensor.setCondition(ReversePolishNotation.create(sensor.getConditionRaw(), sensorMap.values()));
+                sensor.setCondition(expression(sensor.getConditionRaw(), null, sensor, sensorMap, "condition"));
             }
         } catch (Exception e) {
             log.error("Sensor: '{}' condition: '{}' can not be build. Message: '{}'", sensor.getId(), sensor.getConditionRaw(), e.getMessage());
@@ -116,7 +126,7 @@ public class SensorCalculator {
     public static List<EToken> buildFormula(SensorI sensor, Map<Long, ? extends SensorI> sensorMap) {
         try {
             if (sensor.getFormulaRaw() != null && sensor.getFormula() == null) {
-                List<EToken> reversePolishNotation = ReversePolishNotation.create(sensor.getFormulaRaw(), sensorMap.values());
+                List<EToken> reversePolishNotation = expression(sensor.getFormulaRaw(), null, sensor, sensorMap, "formula");
                 sensor.setFormula(reversePolishNotation);
             }
         } catch (Exception e) {

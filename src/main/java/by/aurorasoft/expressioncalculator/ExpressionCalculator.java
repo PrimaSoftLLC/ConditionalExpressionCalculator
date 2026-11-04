@@ -3,6 +3,7 @@ package by.aurorasoft.expressioncalculator;
 import by.aurorasoft.expressioncalculator.model.EToken;
 
 import java.util.List;
+import java.util.function.ToDoubleFunction;
 
 /**
  * calculate math or conditional or logic expression.
@@ -16,11 +17,15 @@ public class ExpressionCalculator {
      * @return number as a result
      */
     public static double calculateMath(List<EToken> tokens) {
+        return calculateMath(tokens, EToken::getValue);
+    }
+
+    public static double calculateMath(List<EToken> tokens, ToDoubleFunction<EToken> valueResolver) {
         final double[] stack = new double[tokens.size()];
         int i = 0;
         for (EToken t : tokens) {
             if (SupportedOperations.NUMBERABLE_TYPES.contains(t.getType())) {
-                stack[i++] = t.getValue();
+                stack[i++] = valueResolver.applyAsDouble(t);
             } else {
                 double b = stack[i-- - 1];
                 double a = stack[i-- - 1];
@@ -36,11 +41,15 @@ public class ExpressionCalculator {
      * @return boolean as a result
      */
     public static boolean calculateConditional(List<EToken> tokens) {
+        return calculateConditional(tokens, EToken::getValue);
+    }
+
+    public static boolean calculateConditional(List<EToken> tokens, ToDoubleFunction<EToken> valueResolver) {
         int i = 0;
         final double[] stack = new double[tokens.size()];
         for (EToken t : tokens) {
             if (SupportedOperations.NUMBERABLE_TYPES.contains(t.getType())) {
-                stack[i++] = t.getValue();
+                stack[i++] = valueResolver.applyAsDouble(t);
                 continue;
             }
             if (SupportedOperations.isMath(t.getType())) {

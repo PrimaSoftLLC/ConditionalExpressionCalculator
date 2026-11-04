@@ -6,6 +6,11 @@ import by.aurorasoft.expressioncalculator.model.sensor.impl.Calibration;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A snapshot's configuration and prepared expressions must remain unchanged while
+ * workers use it. Prepare and safely publish the complete snapshot before calculation.
+ * Custom calculateValue implementations must also be safe for concurrent invocation.
+ */
 public interface SensorI {
 
     Long getId();
