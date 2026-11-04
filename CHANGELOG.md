@@ -1,6 +1,6 @@
 # Изменения
 
-## Не выпущено
+## 7.5
 
 - Подготовлена публикация релизов в GitHub Packages по циклу aurora-release;
   новые Maven-координаты: by.aurorasoft:conditional-expression-calculator.
