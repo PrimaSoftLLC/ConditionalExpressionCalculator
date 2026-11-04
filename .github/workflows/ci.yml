@@ -1,5 +1,12 @@
 name: CI
 on:
+  workflow_dispatch:
+    inputs:
+      finalize_75:
+        description: 'Verify existing 7.5 from c061c0d and create its missing tag; never deploy'
+        type: boolean
+        required: true
+        default: false
   pull_request:
     branches: [develop, master]
   push:
@@ -11,6 +18,7 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
 jobs:
   verify:
+    if: github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -65,9 +73,10 @@ jobs:
         run: |
           cache="$RUNNER_TEMP/package-check"
           mkdir -p "$cache"
+          printf '%s\n' '<project><modelVersion>4.0.0</modelVersion><groupId>verification</groupId><artifactId>download</artifactId><version>1</version></project>' > "$RUNNER_TEMP/download-pom.xml"
           repo='github-conditional-expression-calculator::default::https://maven.pkg.github.com/primasoftllc/conditionalexpressioncalculator'
           for extension in jar pom; do
-            ./mvnw -B "-Dmaven.repo.local=$cache" org.apache.maven.plugins:maven-dependency-plugin:3.8.1:get \
+            ./mvnw -B -f "$RUNNER_TEMP/download-pom.xml" "-Dmaven.repo.local=$cache" org.apache.maven.plugins:maven-dependency-plugin:3.8.1:get \
               "-Dartifact=by.aurorasoft:conditional-expression-calculator:$VERSION:$extension" \
               "-DremoteRepositories=$repo" -Dtransitive=false
           done
@@ -86,3 +95,59 @@ jobs:
         if: failure()
         run: |
           echo "Release failed at commit $GITHUB_SHA. Check the last successful step. Packages may be partially published: do not retry deploy blindly or delete existing versions." >> "$GITHUB_STEP_SUMMARY"
+  finalize-75:
+    if: github.event_name == 'workflow_dispatch' && inputs.finalize_75 && github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      packages: read
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      RELEASE_SHA: c061c0df0fb41777afa75fe2c13d1ad4e3a69446
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: c061c0df0fb41777afa75fe2c13d1ad4e3a69446
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+          server-id: github-conditional-expression-calculator
+      - name: Rebuild original release without publishing
+        run: |
+          test "$(git rev-parse HEAD)" = "$RELEASE_SHA"
+          test -z "$(git ls-remote --tags origin refs/tags/v7.5)"
+          ./mvnw -B clean verify
+      - name: Download existing package using a separate Maven project
+        run: |
+          cache="$RUNNER_TEMP/package-check"
+          printf '%s\n' '<project><modelVersion>4.0.0</modelVersion><groupId>verification</groupId><artifactId>download</artifactId><version>1</version></project>' > "$RUNNER_TEMP/download-pom.xml"
+          repo='github-conditional-expression-calculator::default::https://maven.pkg.github.com/primasoftllc/conditionalexpressioncalculator'
+          for extension in jar pom; do
+            ./mvnw -B -f "$RUNNER_TEMP/download-pom.xml" "-Dmaven.repo.local=$cache" org.apache.maven.plugins:maven-dependency-plugin:3.8.1:get \
+              "-Dartifact=by.aurorasoft:conditional-expression-calculator:7.5:$extension" "-DremoteRepositories=$repo" -Dtransitive=false
+          done
+          python3 - "$cache" "$RELEASE_SHA" <<'PY'
+          import sys, zipfile
+          from pathlib import Path
+          cache = Path(sys.argv[1]) / 'by/aurorasoft/conditional-expression-calculator/7.5'
+          assert (cache / 'conditional-expression-calculator-7.5.pom').read_bytes() == Path('pom.xml').read_bytes(), 'POM mismatch'
+          def contents(path):
+              with zipfile.ZipFile(path) as jar:
+                  return {n: jar.read(n) for n in jar.namelist() if not n.endswith('/')}
+          published = contents(cache / 'conditional-expression-calculator-7.5.jar')
+          rebuilt = contents('target/conditional-expression-calculator-7.5.jar')
+          assert published == rebuilt, 'JAR entry content mismatch (ZIP timestamps ignored)'
+          manifest = published['META-INF/MANIFEST.MF'].decode().replace('\r\n', '\n').replace('\n ', '')
+          assert 'Build-Revision: ' + sys.argv[2] in manifest, 'Revision mismatch'
+          assert 'Implementation-Version: 7.5' in manifest, 'Version mismatch'
+          print('Published POM and all JAR entry bytes match rebuilt release c061c0d')
+          PY
+      - name: Finalize tag on original release SHA
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git tag -a v7.5 "$RELEASE_SHA" -m 'Release 7.5'
+          git push origin refs/tags/v7.5
