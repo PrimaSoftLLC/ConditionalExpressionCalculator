@@ -1,8 +1,12 @@
 package by.aurorasoft.expressioncalculator;
 
 import by.aurorasoft.expressioncalculator.model.EToken;
+import by.aurorasoft.expressioncalculator.model.EType;
+import by.aurorasoft.expressioncalculator.model.sensor.MessageI;
+import by.aurorasoft.expressioncalculator.model.sensor.SensorI;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.ToDoubleFunction;
 
 /**
@@ -21,11 +25,20 @@ public class ExpressionCalculator {
     }
 
     public static double calculateMath(List<EToken> tokens, ToDoubleFunction<EToken> valueResolver) {
+        return calculateMath(tokens, valueResolver, null, 0, null);
+    }
+
+    static double calculateMath(List<EToken> tokens, MessageI message, double value, Map<Long, ? extends SensorI> sensors) {
+        return calculateMath(tokens, null, message, value, sensors);
+    }
+
+    private static double calculateMath(List<EToken> tokens, ToDoubleFunction<EToken> resolver,
+                                        MessageI message, double value, Map<Long, ? extends SensorI> sensors) {
         final double[] stack = new double[tokens.size()];
         int i = 0;
         for (EToken t : tokens) {
             if (SupportedOperations.NUMBERABLE_TYPES.contains(t.getType())) {
-                stack[i++] = valueResolver.applyAsDouble(t);
+                stack[i++] = operand(t, resolver, message, value, sensors);
             } else {
                 double b = stack[i-- - 1];
                 double a = stack[i-- - 1];
@@ -45,11 +58,20 @@ public class ExpressionCalculator {
     }
 
     public static boolean calculateConditional(List<EToken> tokens, ToDoubleFunction<EToken> valueResolver) {
+        return calculateConditional(tokens, valueResolver, null, 0, null);
+    }
+
+    static boolean calculateConditional(List<EToken> tokens, MessageI message, double value, Map<Long, ? extends SensorI> sensors) {
+        return calculateConditional(tokens, null, message, value, sensors);
+    }
+
+    private static boolean calculateConditional(List<EToken> tokens, ToDoubleFunction<EToken> resolver,
+                                               MessageI message, double value, Map<Long, ? extends SensorI> sensors) {
         int i = 0;
         final double[] stack = new double[tokens.size()];
         for (EToken t : tokens) {
             if (SupportedOperations.NUMBERABLE_TYPES.contains(t.getType())) {
-                stack[i++] = valueResolver.applyAsDouble(t);
+                stack[i++] = operand(t, resolver, message, value, sensors);
                 continue;
             }
             if (SupportedOperations.isMath(t.getType())) {
@@ -75,5 +97,15 @@ public class ExpressionCalculator {
             throw new IllegalArgumentException(String.format("Illegal token: '%s'", t.getType().detail));
         }
         return stack[0] == Integer.MAX_VALUE;
+    }
+
+    private static double operand(EToken token, ToDoubleFunction<EToken> resolver, MessageI message,
+                                  double value, Map<Long, ? extends SensorI> sensors) {
+        if (resolver != null) return resolver.applyAsDouble(token);
+        if (token.is(EType.PROPERTY)) return message.getPropertyValue(token.getPropertyName());
+        if (token.is(EType.PARAMETER)) return message.getParameterValue(token.getParameterName());
+        if (token.is(EType.SENSOR_ID)) return token.getSensorId() == 0 ? value
+                : sensors.get(token.getSensorId()).calculateValue(message, sensors);
+        return token.getValue();
     }
 }

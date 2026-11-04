@@ -1,7 +1,6 @@
 package by.aurorasoft.expressioncalculator;
 
 import by.aurorasoft.expressioncalculator.model.EToken;
-import by.aurorasoft.expressioncalculator.model.EType;
 import by.aurorasoft.expressioncalculator.model.sensor.MessageI;
 import by.aurorasoft.expressioncalculator.model.sensor.SensorI;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +44,7 @@ public class SensorCalculator {
         List<EToken> tokens = expression(sensor.getFormulaRaw(), sensor.getFormula(), sensor, sensorMap, "formula");
         double v = 0;
         if (sensor.getFormulaRaw() != null && !tokens.isEmpty()) {
-            v = convertCalibration(sensor, ExpressionCalculator.calculateMath(tokens, t -> resolveValue(t, m, 0, sensorMap)));
+            v = convertCalibration(sensor, ExpressionCalculator.calculateMath(tokens, m, 0, sensorMap));
         } else {
             v = convertCalibration(sensor, v);
         }
@@ -58,7 +57,7 @@ public class SensorCalculator {
     public static boolean applyCondition(SensorI sensor, MessageI m, double v, Map<Long, ? extends SensorI> sensorMap) {
         List<EToken> tokens = expression(sensor.getConditionRaw(), sensor.getCondition(), sensor, sensorMap, "condition");
         if (sensor.getConditionRaw() != null && !tokens.isEmpty()) {
-            return ExpressionCalculator.calculateConditional(tokens, t -> resolveValue(t, m, v, sensorMap));
+            return ExpressionCalculator.calculateConditional(tokens, m, v, sensorMap);
         }
         return true;
     }
@@ -71,7 +70,7 @@ public class SensorCalculator {
             return true;
         }
         double value = calculateValue(sensor, m, sensorMap);
-        return ExpressionCalculator.calculateConditional(c, t -> resolveValue(t, m, value, sensorMap));
+        return ExpressionCalculator.calculateConditional(c, m, value, sensorMap);
     }
 
     /**
@@ -86,17 +85,6 @@ public class SensorCalculator {
 
     private static double convertCalibration(SensorI sensor, double value) {
         return sensor.getCalibration().calculateCalibrationValue(value);
-    }
-
-    /**
-     * prepare {@param tokens} to calculate into {@link ExpressionCalculator}
-     */
-    private static double resolveValue(EToken t, MessageI m, double value, Map<Long, ? extends SensorI> sensorMap) {
-        if (t.is(EType.PROPERTY)) return m.getPropertyValue(t.getPropertyName());
-        if (t.is(EType.PARAMETER)) return m.getParameterValue(t.getParameterName());
-        if (t.is(EType.SENSOR_ID)) return t.getSensorId() == 0 ? value
-                : sensorMap.get(t.getSensorId()).calculateValue(m, sensorMap);
-        return t.getValue();
     }
 
     private static List<EToken> expression(String raw, List<EToken> prepared, SensorI sensor,
