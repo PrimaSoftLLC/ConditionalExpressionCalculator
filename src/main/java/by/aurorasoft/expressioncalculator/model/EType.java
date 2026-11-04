@@ -18,7 +18,8 @@ public enum EType {
     SENSOR_ID("token"),
     PROPERTY("property"),
     PARAMETER("parameter"),
-    OPEN_B("("), CLOSE_B(")");
+    OPEN_B("("), CLOSE_B(")"),
+    BIT("bit"), COMMA(",");
 
     public final String detail;
 

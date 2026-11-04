@@ -9,10 +9,20 @@ import java.util.*;
 public class ReversePolishNotation {
 
     public static List<EToken> create(ExpressionIterator iterator) {
+        final List<EToken> input = new ArrayList<>();
+        boolean hasFunctionSyntax = false;
+        while (iterator.hasNext()) {
+            EToken token = iterator.nextEToken();
+            input.add(token);
+            hasFunctionSyntax |= token.is(EType.BIT) || token.is(EType.COMMA);
+        }
+        if (hasFunctionSyntax) {
+            return new FunctionExpressionParser(input).parse();
+        }
+        // Keep the legacy conversion unchanged for existing formulas.
         final List<EToken> exitStack = new ArrayList<>();
         final Deque<EToken> operations = new LinkedList<>();
-        while (iterator.hasNext()) {
-            EToken t = iterator.nextEToken();
+        for (EToken t : input) {
             convert(exitStack, operations, t);
         }
         resulting(exitStack, operations);

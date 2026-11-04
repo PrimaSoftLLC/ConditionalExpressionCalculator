@@ -42,6 +42,9 @@ public class ExpressionChecker {
             return null;
         }
         List<SensorI> dummyRawTokens = createDummyRawTokenList(raw);
+        if (checkFunctionExpression(raw, dummyRawTokens, false)) {
+            return raw;
+        }
         checkCounts(raw, dummyRawTokens);
         List<EToken> tokens = ReversePolishNotation.create(raw, dummyRawTokens);
         for (EToken t : tokens) {
@@ -121,9 +124,49 @@ public class ExpressionChecker {
             return null;
         }
         List<SensorI> dummyTokens = createDummyRawTokenList(raw);
+        if (checkFunctionExpression(raw, dummyTokens, true)) {
+            return raw;
+        }
         checkCounts(raw, dummyTokens);
         conditionalCheck(raw, dummyTokens);
         return raw;
+    }
+
+    private boolean checkFunctionExpression(String raw, List<SensorI> rawTokens, boolean conditional) {
+        ExpressionIterator iterator = new ExpressionIterator(raw, rawTokens);
+        boolean hasFunctionSyntax = false;
+        while (iterator.hasNext()) {
+            EToken token = iterator.nextEToken();
+            hasFunctionSyntax |= token.is(EType.BIT) || token.is(EType.COMMA);
+        }
+        if (!hasFunctionSyntax) {
+            return false;
+        }
+        List<EToken> tokens = ReversePolishNotation.create(raw, rawTokens);
+        EType resultType = tokens.get(tokens.size() - 1).getType();
+        boolean booleanResult = SupportedOperations.isCondition(resultType) || SupportedOperations.isLogic(resultType);
+        if (conditional != booleanResult) {
+            throw new IllegalArgumentException(conditional ? "Condition must be boolean" : "Formula must be numeric");
+        }
+
+        // null means unknown until calculation, not a dummy sensor/parameter value.
+        Double[] values = new Double[tokens.size()];
+        int size = 0;
+        for (EToken token : tokens) {
+            if (SupportedOperations.NUMBERABLE_TYPES.contains(token.getType())) {
+                values[size++] = token.is(EType.NUMB) ? token.getValue() : null;
+                continue;
+            }
+            Double right = values[--size];
+            Double left = values[--size];
+            if (token.is(EType.BIT)) {
+                if (left != null) SupportedOperations.checkBitNumber(left);
+                if (right != null) SupportedOperations.checkBitIndex(right);
+            }
+            values[size++] = left != null && right != null && SupportedOperations.isMath(token.getType())
+                    ? SupportedOperations.calculate(left, right, token.getType()) : null;
+        }
+        return true;
     }
 
     private void checkCounts(String raw, List<SensorI> rawTokens) {

@@ -62,6 +62,15 @@ public class ExpressionIterator {
             }
         }
 
+        // A comparison may be followed by a function name, not only a digit or reference.
+        if ("<>!=".indexOf(raw.charAt(index)) >= 0) {
+            r.append(raw.charAt(index++));
+            if (index < length && raw.charAt(index) == '=') {
+                r.append(raw.charAt(index++));
+            }
+            return r.toString();
+        }
+
         if (SupportedOperations.UNO_OPERATIONS.contains(raw.charAt(index))) {
             r.append(raw.charAt(index++));
             return r.toString();

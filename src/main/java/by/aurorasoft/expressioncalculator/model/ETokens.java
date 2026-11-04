@@ -26,6 +26,8 @@ public class ETokens {
         cache.put(")", EToken.operation(EType.CLOSE_B));
         cache.put("&", EToken.operation(EType.AND));
         cache.put("|", EToken.operation(EType.OR));
+        cache.put("bit", EToken.operation(EType.BIT));
+        cache.put(",", EToken.operation(EType.COMMA));
     }
 
     public static EToken create(String s) {

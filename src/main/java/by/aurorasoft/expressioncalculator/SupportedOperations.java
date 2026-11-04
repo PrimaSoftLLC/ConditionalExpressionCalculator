@@ -8,6 +8,8 @@ import java.util.Set;
 
 public abstract class SupportedOperations {
 
+    private static final double MAX_EXACT_INTEGER = 0x1.0p53;
+
     public static final String MESSAGE_PARAMS_KEY_VALUE_SEPARATOR = ":";
 
     public static final char MESSAGE_PROPERTY_TOKEN = '#';
@@ -23,7 +25,7 @@ public abstract class SupportedOperations {
 
     public static final Set<EType> NUMBERABLE_TYPES = Set.of(EType.SENSOR_ID, EType.NUMB, EType.PROPERTY, EType.PARAMETER);
 
-    public static final Set<EType> MATH_TYPES = Set.of(EType.MULT, EType.DIV, EType.PLUS, EType.MINUS);
+    public static final Set<EType> MATH_TYPES = Set.of(EType.MULT, EType.DIV, EType.PLUS, EType.MINUS, EType.BIT);
 
     public static final Set<EType> CONDITIONALS_TYPES = Set.of(EType.MORE, EType.MORE_E, EType.LESS, EType.LESS_E, EType.EQUAL, EType.NOT_E);
 
@@ -32,7 +34,7 @@ public abstract class SupportedOperations {
     public static final Set<Character> UNO_OPERATIONS = Set.of(
             EType.PLUS.detail.charAt(0), EType.MINUS.detail.charAt(0), EType.MULT.detail.charAt(0),
             EType.DIV.detail.charAt(0), EType.OPEN_B.detail.charAt(0), EType.CLOSE_B.detail.charAt(0),
-            EType.OR.detail.charAt(0), EType.AND.detail.charAt(0));
+            EType.OR.detail.charAt(0), EType.AND.detail.charAt(0), EType.COMMA.detail.charAt(0));
 
     public static final Map<EType, Integer> PRIORITY = new HashMap<>();
     
@@ -75,7 +77,23 @@ public abstract class SupportedOperations {
             case MINUS: return a - b;
             case MULT: return a * b;
             case DIV: return a / b;
+            case BIT:
+                checkBitNumber(a);
+                checkBitIndex(b);
+                return ((long) a >>> (int) b) & 1L;
             default: throw new UnsupportedOperationException(String.format("operand: %s is not supported", operand));
+        }
+    }
+
+    static void checkBitNumber(double value) {
+        if (!Double.isFinite(value) || value != Math.rint(value) || Math.abs(value) > MAX_EXACT_INTEGER) {
+            throw new IllegalArgumentException("bit number must be a finite integer in [-2^53, 2^53]: " + value);
+        }
+    }
+
+    static void checkBitIndex(double index) {
+        if (!Double.isFinite(index) || index != Math.rint(index) || index < 0 || index > 63) {
+            throw new IllegalArgumentException("bit index must be a finite integer in [0, 63]: " + index);
         }
     }
 
