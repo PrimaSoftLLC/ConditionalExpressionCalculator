@@ -16,8 +16,8 @@ CI использует `./mvnw -B verify`. Wrapper only-script, без JAR в �
 
 ## Подключение из GitHub Packages
 
-Первый планируемый выпуск — 7.5; до его выполнения эта версия недоступна.
-После выпуска заменить JitPack-координаты и добавить repository:
+Первый выпуск в GitHub Packages — 7.5. Для подключения заменить
+JitPack-координаты и добавить repository:
 
 ```xml
 <repositories>
