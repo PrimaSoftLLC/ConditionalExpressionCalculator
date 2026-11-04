@@ -1,5 +1,107 @@
 # ConditionalExpressionCalculator
 
+Java-библиотека для вычисления арифметических выражений и логических условий,
+в том числе по данным телеметрии. Позволяет описать датчик формулой, использовать
+параметры сообщения и значения других датчиков, применить калибровку и отфильтровать
+результат по условию.
+
+Выражение преобразуется в обратную польскую запись — список токенов, который можно
+подготовить один раз и использовать для последующих расчётов. Библиотека работает
+внутри приложения, без отдельного сервера. Минимальная версия Java — 11.
+
+## Быстрый старт
+
+Для выражений с числами достаточно `ReversePolishNotation` и `ExpressionCalculator`:
+
+```java
+import by.aurorasoft.expressioncalculator.ExpressionCalculator;
+import by.aurorasoft.expressioncalculator.ReversePolishNotation;
+import by.aurorasoft.expressioncalculator.model.EToken;
+import java.util.List;
+
+List<EToken> formula = ReversePolishNotation.create("(6+10-4)/3", List.of());
+double value = ExpressionCalculator.calculateMath(formula); // 4.0
+
+List<EToken> condition = ReversePolishNotation.create("10>0&100<120", List.of());
+boolean matches = ExpressionCalculator.calculateConditional(condition); // true
+```
+
+Пустой список во втором аргументе означает, что выражение не ссылается на датчики.
+Для проверки пользовательского ввода используйте `ExpressionChecker.checkMath`
+или `checkLogic`: они возвращают строку без лишних пробелов вне фигурных скобок
+и выбрасывают `IllegalArgumentException` при ошибке. Это методы экземпляра:
+`new ExpressionChecker().checkMath("2 + 2")` вернёт `"2+2"`.
+При прямом вызове `ReversePolishNotation.create` передавайте выражение без пробелов
+вне имён датчиков.
+
+## Синтаксис выражений
+
+| Элемент | Запись | Пример |
+| --- | --- | --- |
+| Числа | Целые и десятичные с точкой | `12`, `3.5` |
+| Арифметика | `+`, `-`, `*`, `/` | `2+3*4` |
+| Сравнения | `>`, `>=`, `<`, `<=`, `=`, `!=` | `10>=5` |
+| Логическое И / ИЛИ | `&` / `\|` | `(10>5)&(2<3)` |
+| Группировка | `(`, `)` | `(2+3)*4` |
+| Свойство сообщения | `{#имя}` | `{#speed}` |
+| Параметр телеметрии | `{@имя}` | `{@fuel}` |
+| Другой датчик по имени | `{имя датчика}` | `{Fuel level}` |
+| Текущее значение | `{x}` | `{x}>0` |
+
+Приоритеты от старшего к младшему: `*` и `/`, затем `+` и `-`, сравнения,
+затем логические операции. У `&` и `|` одинаковый приоритет; явно задавайте
+нужную группировку скобками. Логические операции не используют короткое замыкание.
+Для отрицательного числа используйте вычитание: `(0-10)`.
+
+Доступные свойства сообщения: `latitude`, `longitude`, `altitude`, `speed`,
+`amountSatellite`, `course`, `gpsOdometer`, `gsmStrength`, `battery`,
+`batteryVoltage`, `onboardVoltage`, `ecoAcceleration`, `ecoBraking`,
+`ecoCornering`, `ecoBump`.
+
+Имена датчиков сопоставляются без учёта регистра. В исходной строке `{123}`
+означает датчик с **именем** `123`, а не поиск по ID. При подготовке выражения
+имена заменяются внутренними ссылками на ID датчиков.
+
+## Расчёт датчиков
+
+`SensorI` описывает датчик, а `MessageI` — сообщение с телеметрией. Можно реализовать
+эти интерфейсы в своей модели или использовать `SensorImpl` и `MessageImpl`
+из пакета `by.aurorasoft.expressioncalculator.model.sensor.impl`.
+
+Пример настройки датчика; `message` — ваше сообщение, реализующее `MessageI`:
+
+```java
+import by.aurorasoft.expressioncalculator.SensorCalculator;
+import by.aurorasoft.expressioncalculator.model.sensor.impl.Calibration;
+import by.aurorasoft.expressioncalculator.model.sensor.impl.SensorImpl;
+import java.util.Map;
+
+SensorImpl sensor = new SensorImpl(
+        1L, "Fuel level", 100L, new Calibration(),
+        "{@fuel}*0.1", "{x}>=0", Map.of());
+Map<Long, SensorImpl> sensors = Map.of(sensor.getId(), sensor);
+
+SensorCalculator.prepare(sensors);
+double fuelLevel = SensorCalculator.calculateValue(sensor, message, sensors);
+```
+
+При `message.getParams()`, равном `"fuel:250,temp:18"`, результат будет `25.0`.
+Стандартный разбор параметров ожидает пары `имя:число`, разделённые запятыми;
+отсутствующий или нечисловой параметр даёт `Double.NaN`.
+
+Расчёт выполняется в три шага: формула → калибровка → условие. Пустая
+`new Calibration()` оставляет значение без изменений; калибровка по точкам
+`RawData` использует линейные участки и продолжает крайние участки за диапазон точек.
+Если условие ложно, `calculateValue` возвращает `Double.NaN`.
+Для получения значения без проверки условия есть `calculateWithoutCondition`.
+
+В карту нужно включить все зависимые датчики. Ошибка подготовки формулы логируется,
+и расчёт использует исходный `0` с последующей калибровкой; ошибочное условие
+логируется и не ограничивает результат. Проверяйте выражения до сохранения
+конфигурации, чтобы не принимать такой результат за корректное измерение.
+Особенности `{x}` и совместного использования датчиков описаны в разделе
+[«Параллельные вычисления»](#параллельные-вычисления).
+
 ## Сборка
 
 Инструменты фиксируются в mise.toml: Temurin 25 и Maven 3.9.16.
@@ -122,8 +224,3 @@ double value = SensorCalculator.calculateValue(sensor, message, sensorMap);
 `{x}` в формуле равен исходному 0; в собственном условии — откалиброванному значению,
 во внешнем условии — значению целевого датчика. Логические операнды вычисляются без
 короткого замыкания; результаты зависимостей не кешируются.
-
-## Историческая публикация
-
-Как сделать свой Maven Repository на Github?
-https://devcolibri.com/%D0%BA%D0%B0%D0%BA-%D1%81%D0%B4%D0%B5%D0%BB%D0%B0%D1%82%D1%8C-%D1%81%D0%B2%D0%BE%D0%B9-maven-repository-%D0%BD%D0%B0-github/
